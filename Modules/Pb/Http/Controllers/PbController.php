@@ -2,11 +2,13 @@
 
 namespace Modules\Pb\Http\Controllers;
 
+use App\Services\LogService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
+use Modules\Pb\Helper\Common;
+use Modules\Pb\Validators\UserValidator;
+use Illuminate\Support\Facades\Auth;
 
-class PbController extends Controller
+class PbController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -17,56 +19,54 @@ class PbController extends Controller
         return view('pb::index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
+    public function getLogin(Request $request)
     {
-        return view('pb::create');
+        $messages = Common::getMessage($request);
+        return view('pb::login')->with(compact('messages'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function store(Request $request)
+    public function getLogout()
     {
+        Auth::guard('web')->logout();
+        return redirect(route('pb.login'));
     }
 
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
+    public function postLogin(Request $request)
     {
-        return view('pb::show');
+        if(!$this->hasTooManyLoginAttempts($request)){
+            try {
+                $this->incrementLoginAttempts($request);
+                $userValidator = new UserValidator();
+                $validator = $this->checkValidator($request->all(), $userValidator->validateLogin());
+
+                if(!$validator->fails()){
+                    if (Auth::guard('web')->attempt(['email' => $request->get('email'), 'password' => $request->get('password')])) {
+                        return redirect()->intended(route('pb.index'));
+                    } else {
+                        $error = [trans('auth.failed')];
+                    }
+                }else{
+                    $error = $validator->getMessageBag();
+                }
+            } catch (\Exception $e) {
+                LogService::write($request, $e);
+                $error = [trans('auth.failed')];
+            }
+        }else{
+            $this->fireLockoutEvent($request);
+            $seconds = $this->limiter()->availableIn(
+                $this->throttleKey($request)
+            );
+            $message = str_replace(':seconds', $seconds, trans('auth.throttle'));
+            $error = [$message];
+        }
+        return $this->redirectToLogin($request, $error);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('pb::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
+    protected function redirectToLogin($request, $message){
+        if($message){
+            Common::setMessage($request, MESSAGE_STATUS_ERROR, $message);
+        }
+        return redirect($this->routeLogin)->withInput();
     }
 }

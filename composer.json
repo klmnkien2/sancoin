@@ -34,7 +34,8 @@
             "Modules\\" : "Modules/"
         },
         "files" : [
-            "config/constants.php"
+            "config/constants.php",
+			"app/Helper/Helper.php"
         ]
     },
     "autoload-dev": {
