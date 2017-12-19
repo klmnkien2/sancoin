@@ -1,0 +1,16 @@
+{
+    "name": "Pb",
+    "alias": "pb",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Pb\\Providers\\PbServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "start.php"
+    ],
+    "requires": []
+}
