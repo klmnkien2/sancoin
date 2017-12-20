@@ -3,6 +3,7 @@
 <head>
 	<meta name="viewport" content="width=device-width" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<title>Sancoin</title>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700&amp;subset=vietnamese">
 	<link rel="stylesheet" href="{{url_sync('assets/pb/css/fontawesome.css')}}" type="text/css" />
@@ -26,6 +27,8 @@
 	<script src="{{url_sync('assets/pb/js/jquery.1.12.4.min.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/bootstrap.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/scrollbar.min.js')}}"></script>
+	<script src="{{url_sync('assets/pb/js/jquery-loading-overlay/src/loadingoverlay.min.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/custom.js')}}"></script>
+	<script src="{{url_sync('assets/pb/js/global.js')}}"></script>
 	</body>
 </html>

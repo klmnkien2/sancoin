@@ -1088,7 +1088,9 @@
 @stop
 
 @section('popup-content')
-	@include('pb::mod.popup_login')
-	@include('pb::mod.popup_register')
-	@include('pb::mod.popup_reset_passwd')
+	@if(!Auth::check())
+    	@include('pb::mod.popup_login')
+    	@include('pb::mod.popup_register')
+    	@include('pb::mod.popup_reset_passwd')
+	@endif
 @stop

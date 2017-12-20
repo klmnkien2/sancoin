@@ -9,16 +9,16 @@
 				<form>
 					<div class="clearfix form-vertical">
 						<div class="form-group">
-							<input type="text" class="form-control" id="username" placeholder="Username">
+							<input type="text" class="form-control" placeholder="Username">
 						</div>
 						<div class="form-group">
-							<input type="email" class="form-control" id="email1" placeholder="Your Email">
+							<input type="email" class="form-control" placeholder="Your Email">
 						</div>
 						<div class="form-group">
-							<input type="password" class="form-control" id="password" placeholder="Password">
+							<input type="password" class="form-control" placeholder="Password">
 						</div>
 						<div class="form-group">
-							<input type="password" class="form-control" id="repeatPassword" placeholder="Repeat Password">
+							<input type="password" class="form-control" placeholder="Repeat Password">
 						</div>
 						<button type="submit" class="btn btn-flat-green"><span class="btn-inner">Register</span></button>
 					</div>

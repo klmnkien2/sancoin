@@ -6,15 +6,19 @@
 				<h4 class="modal-title">Sign In</h4>
 			</div>
 			<div class="modal-body">
-				<form>
+				<form action="{{route('pb.postLogin')}}" method="POST">
 					<div class="clearfix form-vertical">
+						{{ csrf_field() }}
 						<div class="form-group">
-							<input type="text" class="form-control" id="username" placeholder="Username">
+							<span class="error"></span>
 						</div>
 						<div class="form-group">
-							<input type="password" class="form-control" id="password" placeholder="Password">
+							<input type="email" class="form-control" name="email" placeholder="Email">
 						</div>
-						<button type="submit" class="btn btn-flat-green"><span class="btn-inner">Sign In</span></button>
+						<div class="form-group">
+							<input type="password" class="form-control" name="password" placeholder="Password">
+						</div>
+						<button id="pg-login-submit" type="submit" class="btn btn-flat-green"><span class="btn-inner">Sign In</span></button>
 					</div>
 				</form>
 			</div>
