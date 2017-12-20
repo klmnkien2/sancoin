@@ -22,7 +22,7 @@
 								<div class="clearfix user-logged">
 									<div class="clearfix user-head">
 										<div class="clearfix user-info">
-											<strong class="user-name">{{ Auth::user()->name }}</strong>
+											<strong class="user-name">{{ Auth::user()->username }}</strong>
 										</div>
 									</div>
 								</div>

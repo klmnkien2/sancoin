@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 use Modules\Pb\Helper\Common;
 use Modules\Pb\Validators\UserValidator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\User;
 use Auth;
+use Modules\Pb\Services\UserService;
 
 class PbController extends BaseController
 {
     use AuthenticatesUsers;
+
+    protected $userService;
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -43,7 +51,7 @@ class PbController extends BaseController
                 $validator = $this->checkValidator($request->all(), $userValidator->validateLogin());
                 if (! $validator->fails()) {
                     if (Auth::guard('web')->attempt([
-                        'email' => $request->get('email'),
+                        'username' => $request->get('username'),
                         'password' => $request->get('password')
                     ])) {
                         $success = true;
@@ -58,7 +66,7 @@ class PbController extends BaseController
             } catch (\Exception $e) {
                 LogService::write($request, $e);
                 $error = [
-                    trans('auth.failed')
+                    'common' => [trans('auth.failed')]
                 ];
             }
         } else {
@@ -66,13 +74,48 @@ class PbController extends BaseController
             $seconds = $this->limiter()->availableIn($this->throttleKey($request));
             $message = str_replace(':seconds', $seconds, trans('auth.throttle'));
             $error = [
-                $message
+                'common' => [$message]
             ];
         }
         return json_encode([
             'redirect' => route('pb.index'),
             'success' => empty($success) ? false : $success,
-            'error' => empty($error) ? [trans('auth.failed')]: $error
+            'error' => empty($error) ? []: $error
+        ]);
+    }
+
+    public function postRegister(Request $request)
+    {
+        try {
+            $userValidator = new UserValidator();
+            $validator = $this->checkValidator($request->all(), $userValidator->validateRegister());
+            if (! $validator->fails()) {
+                $userNameExisted = User::where('username', '=', $request->get('username'))->first();
+                $emailExisted = User::where('email', $request->get('email'))->first();
+                if ($userNameExisted) {
+                    $error = [
+                        'common' => [trans('messages.message.reg_username_existed')]
+                    ];
+                } else if ($emailExisted) {
+                    $error = [
+                        'common' => [trans('messages.message.reg_email_existed')]
+                    ];
+                } else {
+                    $this->userService->createUser($request->get('username'), $request->get('email'), $request->get('password'));
+                    $success = true;
+                }
+            } else {
+                $error = $validator->getMessageBag();
+            }
+        } catch (\Exception $e) {
+            LogService::write($request, $e);
+            $error = [
+                'common' => [trans('messages.message.reg_common_fail')]
+            ];
+        }
+        return json_encode([
+            'success' => empty($success) ? false : $success,
+            'error' => empty($error) ? []: $error
         ]);
     }
 

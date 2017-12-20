@@ -11,9 +11,33 @@ class UserValidator
      */
     public function validateLogin() {
 
-        $res['rules'] = $this->_defaultRule();
-        $res['messages'] = $this->_defaultMessage();
-        $res['attributes'] = $this->_defaultAttribute();
+        $res['rules'] = $res['rules'] = [
+            'username' => 'required',
+            'password' => 'required',
+        ];
+        $res['messages'] = [];
+        $res['attributes'] = [
+            'username' => trans('messages.label.username'),
+            'password' => trans('messages.label.password'),
+        ];;
+
+        return $res;
+    }
+
+    public function validateRegister() {
+        $max_length_email = config('validate.email_max_length');
+        $min_length_password = config('validate.password_min_length');
+        $res['rules'] = [
+            'username' => 'required|min:4|max:30',
+            'email' => 'required|email|max:'.$max_length_email,
+            'password' => 'required|confirmed|min:'.$min_length_password,
+        ];
+        $res['messages'] = [];
+        $res['attributes'] = [
+            'email' => trans('messages.label.email'),
+            'username' => trans('messages.label.username'),
+            'password' => trans('messages.label.password'),
+        ];
 
         return $res;
     }

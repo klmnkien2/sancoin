@@ -8,13 +8,13 @@ use Modules\Pb\Validators\UserValidator;
 class CreateUser
 {
 
-    public static function compile($email, $password)
+    public static function compile($username, $email, $password)
     {
         try {
             $dataUser = [
                 'email' => $email,
                 'password' => $password,
-                'name' => $email
+                'username' => $username
             ];
             $userValidator = new UserValidator();
             $validator = validator($dataUser, $userValidator->validateLogin()['rules']);
@@ -26,7 +26,7 @@ class CreateUser
                 }
                 exit();
             }
-            $user = User::where('email', $email)->first();
+            $user = User::where('email', $email)->orWhere('username', '=', $username)->first();
             if ($user) {
                 $message = "Error: Email already exist.\n";
                 echo $message;

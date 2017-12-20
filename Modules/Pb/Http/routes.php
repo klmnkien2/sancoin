@@ -7,12 +7,12 @@ if (check_domain(env('DOMAIN_PB'))) {
         Route::group(['middleware' => 'guest:web'], function ()
         {
             // Login
-            Route::get('/login', 'PbController@getLogin')->name('pb.login');
+            Route::post('/register', 'PbController@postRegister')->name('pb.register');
             Route::post('/login', 'PbController@postLogin')->name('pb.postLogin');
         });
         Route::group(['middleware' => 'auth:web'], function ()
         {
-            Route::get('logout', 'PbController@getLogout')->name('pb.logout');
+            Route::get('/logout', 'PbController@getLogout')->name('pb.logout');
         });
     });
 }

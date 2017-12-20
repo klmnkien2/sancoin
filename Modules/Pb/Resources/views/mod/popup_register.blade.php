@@ -6,21 +6,25 @@
 				<h4 class="modal-title">Join Sancoin</h4>
 			</div>
 			<div class="modal-body">
-				<form>
+				<form action="{{route('pb.register')}}" method="POST">
 					<div class="clearfix form-vertical">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <span class="error"></span>
+                        </div>
 						<div class="form-group">
-							<input type="text" class="form-control" placeholder="Username">
+							<input type="text" class="form-control" placeholder="Username" name="username">
 						</div>
 						<div class="form-group">
-							<input type="email" class="form-control" placeholder="Your Email">
+							<input type="email" class="form-control" placeholder="Your Email" name="email">
 						</div>
 						<div class="form-group">
-							<input type="password" class="form-control" placeholder="Password">
+							<input type="password" class="form-control" placeholder="Password" name="password">
 						</div>
 						<div class="form-group">
-							<input type="password" class="form-control" placeholder="Repeat Password">
+							<input type="password" class="form-control" placeholder="Repeat Password" name="password_confirmation">
 						</div>
-						<button type="submit" class="btn btn-flat-green"><span class="btn-inner">Register</span></button>
+						<button id="pg-reg-submit"  type="submit" class="btn btn-flat-green"><span class="btn-inner">Register</span></button>
 					</div>
 				</form>
 			</div>

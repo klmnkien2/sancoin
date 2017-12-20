@@ -17,6 +17,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
-Artisan::command('CreateUser {email} {password}', function ($email, $password) {
-    \App\Helper\CreateUser::compile($email, $password);
-})->describe('Create an user with email and password');
+Artisan::command('CreateUser {username} {email} {password}', function ($username, $email, $password) {
+    \App\Helper\CreateUser::compile($username, $email, $password);
+})->describe('Create an user with username, email and password');
