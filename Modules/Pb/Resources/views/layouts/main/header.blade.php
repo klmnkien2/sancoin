@@ -28,8 +28,8 @@
 								</div>
 							</li>
 							<li class="divider"></li>
-							<li><a class="user-link-profile" href="#">Profile</a></li>
-							<li><a class="user-link-my-items" href="#">My items</a></li>
+							<li><a class="user-link-profile" href="{{ route('pb.getProfile') }}">{{ trans('messages.label.profile') }}</a></li>
+<!-- 							<li><a class="user-link-my-items" href="#">My items</a></li> -->
 							<li><a class="user-link-logout" href="{{ route('pb.logout') }}">Logout</a></li>
 						</ul>
 					</div>
@@ -48,8 +48,8 @@
 				<ul class="nav navbar-nav">
 					<li class="exchange-link active"><a href="#">Exchange</a></li>
 					<li class="balances-link"><a href="#">Balances</a></li>
-					<li class="trade-view-link"><a href="#">Trade View</a></li>
-					<li class="my-funds-link"><a href="#">My Funds</a></li>
+<!-- 					<li class="trade-view-link"><a href="#">Trade View</a></li> -->
+<!-- 					<li class="my-funds-link"><a href="#">My Funds</a></li> -->
 					@if(!Auth::check())
 					<li class="signin-link"><a href="#" data-toggle="modal" data-target="#signinModal">Sign In</a></li>
 					<li class="register-link button-type"><a href="#" data-toggle="modal" data-target="#registerModal">Register</a></li>
