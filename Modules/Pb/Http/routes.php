@@ -15,6 +15,8 @@ if (check_domain(env('DOMAIN_PB'))) {
         Route::group(['middleware' => 'auth:web'], function ()
         {
             Route::get('/logout', 'PbController@getLogout')->name('pb.logout');
+            Route::get('/profile', 'WalletController@profile')->name('pb.getProfile');
+            Route::post('/updateProfile', 'WalletController@updateProfile')->name('pb.updateProfile');
         });
     });
 }

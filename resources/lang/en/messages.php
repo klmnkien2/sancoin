@@ -5,6 +5,12 @@ return [
         'email' => 'Email',
         'username' => 'Username',
         'password' => 'Password',
+        'profile' => 'Profile',
+        'fullname' => 'Fullname',
+        'id_number' => 'ID Card No.',
+        'id_created_at' => 'ID created at',
+        'id_created_by' => 'ID created by',
+        'buttonSave' => 'Save',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
