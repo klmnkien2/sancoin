@@ -10,6 +10,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\User;
 use Auth;
 use Modules\Pb\Services\UserService;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Registerred;
 
 class PbController extends BaseController
 {
@@ -101,7 +103,8 @@ class PbController extends BaseController
                         'common' => [trans('messages.message.reg_email_existed')]
                     ];
                 } else {
-                    $this->userService->createUser($request->get('username'), $request->get('email'), $request->get('password'));
+                    //$this->userService->createUser($request->get('username'), $request->get('email'), $request->get('password'));
+                    Mail::to($request->get('email'))->send(new Registerred(['id' => 1, 'activate_code' => 'codemetounlock']));
                     $success = true;
                 }
             } else {
@@ -109,6 +112,7 @@ class PbController extends BaseController
             }
         } catch (\Exception $e) {
             LogService::write($request, $e);
+            dd($e);
             $error = [
                 'common' => [trans('messages.message.reg_common_fail')]
             ];
@@ -117,6 +121,16 @@ class PbController extends BaseController
             'success' => empty($success) ? false : $success,
             'error' => empty($error) ? []: $error
         ]);
+    }
+
+    public function preActivate()
+    {
+        return view('pb::pre_activate');
+    }
+
+    public function activate($id, $code)
+    {
+        return view('pb::reg_activate');
     }
 
     protected function redirectToLogin($request, $message){
