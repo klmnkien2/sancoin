@@ -8,7 +8,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#"><img src="{{url_sync('assets/pb/images/logo.png')}}" alt=""></a>
+				<a class="navbar-brand" href="{{route('pb.index')}}"><img src="{{url_sync('assets/pb/images/logo.png')}}" alt=""></a>
 			</div>
 			<div class="navbar-visible">
 				<div class="profile-languages">

@@ -10,6 +10,8 @@
 	<link rel="stylesheet" href="{{url_sync('assets/pb/css/bootstrap.css')}}" type="text/css" />
 	<link rel="stylesheet" href="{{url_sync('assets/pb/css/scrollbar.css')}}" type="text/css" />
 	<link rel="stylesheet" href="{{url_sync('assets/pb/css/style.css')}}" type="text/css" />
+	<link rel="stylesheet" href="{{url_sync('assets/pb/css/custom.css')}}" type="text/css" />
+	<link rel="stylesheet" href="{{url_sync('assets/pb/plugin/sweetalert/sweetalert2.css')}}" type="text/css" />
 </head>
 <body>
 	<div class="page-container">
@@ -28,7 +30,9 @@
 	<script src="{{url_sync('assets/pb/js/bootstrap.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/scrollbar.min.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/jquery-loading-overlay/src/loadingoverlay.min.js')}}"></script>
+	<script src="{{url_sync('assets/pb/plugin/sweetalert/sweetalert2.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/custom.js')}}"></script>
 	<script src="{{url_sync('assets/pb/js/global.js')}}"></script>
+	@yield('extend-js')
 	</body>
 </html>

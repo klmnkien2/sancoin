@@ -11,6 +11,10 @@ return [
         'id_created_at' => 'ID created at',
         'id_created_by' => 'ID created by',
         'buttonSave' => 'Save',
+        'buttonSelect' => 'Select',
+        'buttonClear' => 'Clear',
+        'buttonClearImage' => 'Clear images',
+        'upload_image' => 'Upload images (at least 2 and maximum is 3)',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
