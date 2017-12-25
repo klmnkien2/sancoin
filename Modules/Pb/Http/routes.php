@@ -8,6 +8,7 @@ if (check_domain(env('DOMAIN_PB'))) {
         {
             // Login
             Route::post('/register', 'PbController@postRegister')->name('pb.register');
+            Route::get('/login', 'PbController@getLogin')->name('login');
             Route::post('/login', 'PbController@postLogin')->name('pb.postLogin');
             Route::get('/r/a/u/{id}/{code}', 'PbController@activate')->name('pb.reg_activate');
             Route::get('/preactivate', 'PbController@preActivate')->name('pb.pre_activate');

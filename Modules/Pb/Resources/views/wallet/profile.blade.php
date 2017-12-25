@@ -11,7 +11,7 @@
 								<h3 class="box-title"><strong class="title-inner">{{ trans('messages.label.profile') }}</strong></h3>
 							</div>
 							<div class="clearfix box-body" style="padding: 15px;">
-								<form enctype="multipart/form-data" type="post" action="{{route('pb.updateProfile')}}">
+								<form enctype="multipart/form-data" method="POST" type="post" action="{{route('pb.updateProfile')}}">
 									<div class="clearfix form-inner">
                                         <div>
                                             @includeIf('pb::mod.alert_danger', ['name' => 'error', 'display' => 'none'])
@@ -51,12 +51,13 @@
                                                 <button id="pg-select-image" type="button" class="btn btn-flat"><span class="btn-inner">{{trans('messages.label.buttonSelect')}}</span></button>
     											<div id="pg-item-upload" style="margin-top: 10px;">
     											</div>
-    											<input type="file" class="hidden" id="pg-upload-image" multiple="multiple">
+    											<input type="file" name="images[]" class="hidden" id="pg-upload-image" multiple="multiple">
     										</div>
                                         </div>
 
 										<div class="button-group">
-											<button id="pg-profile-save" type="button" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonSave')}}</span></button>
+											{{csrf_field()}}
+											<button id="pg-profile-save" type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonSave')}}</span></button>
 											<button id="pg-clear-image" type="button" class="btn btn-flat-yellow" style="margin-left: 10px;"><span class="btn-inner">{{trans('messages.label.buttonClearImage')}}</span></button>
 										</div>
 									</div>

@@ -1,6 +1,5 @@
 (function (global, $) {
   var pageClass = {
-  	formdata: false,
     build: function () {
     	if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
         alert('The File APIs are not fully supported in this browser.');
@@ -13,7 +12,6 @@
 //    	  showCancelButton: true,
 //    	  showCloseButton: true
 //    	});
-    	this.formdata = new FormData();
       // Bind event listeners
       this.bindAllListeners();
     },
@@ -21,32 +19,24 @@
     	$("#pg-upload-image").on("change", $.proxy(this, 'onChangeFileInput'));
     	$("#pg-select-image").on("click", $.proxy(this, 'onSelectButton'));
     	$("#pg-clear-image").on("click", $.proxy(this, 'onClearButton'));
-    	$("#pg-profile-save").on("click", $.proxy(this, 'onSaveProfile'));
+    	//$("#pg-profile-save").on("click", $.proxy(this, 'onSaveProfile'));
     },
     onSaveProfile: function(evt) {
     	evt.preventDefault();
-    	console.log(this.formdata);
       var form = $(evt.currentTarget).closest('form');
       $.ajax({
         url: form.attr('action'),
         method: 'POST',
         data: form.serializeArray(),
-        data: this.formdata,
         beforeSend: function( xhr ) {
           $.LoadingOverlay("show");
         }
       }).done(function (response) {
         var response = jQuery.parseJSON(response);
         if (response.success === true) {
-          //$.LoadingOverlay("hide");
-          window.location.href = response.redirect;
+          //TODO
         } else {
-          if (!jQuery.isEmptyObject(response.error)) {
-            for (key in response.error) {
-              form.find("span.error").html(response.error[key][0]);
-              break;
-            }
-          }
+        	//TODO
         }
       }).fail(function (data) {
       }).always(function (data) {
@@ -102,9 +92,6 @@
         image.onload= function(){
           ctx.drawImage(image,100,100)
         }
-
-        // add data file to ajax post
-        this.formdata.append("images[]", file);
       }
     }
   };
