@@ -21,9 +21,7 @@ class CreateProfilesTable extends Migration
             $table->string('id_created_at', 20)->nullable();
             $table->string('id_created_by', 255)->nullable();
             $table->string('address', 500)->nullable();
-            $table->string('image1', 500)->nullable();
-            $table->string('image2', 500)->nullable();
-            $table->string('image3', 500)->nullable();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

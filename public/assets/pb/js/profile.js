@@ -45,6 +45,7 @@
     },
     onChangeFileInput: function (evt) {
       //evt.preventDefault();
+    	$("#pg-item-upload").html('');
     	var files = document.getElementById('pg-upload-image').files;
     	this.showThumbnail(files);
     },
@@ -53,7 +54,7 @@
       e.preventDefault();
     },
     onClearButton: function(e) {
-    	var $el = $('#pg-upload-image');
+      var $el = $('#pg-upload-image');
       $el.wrap('<form>').closest('form').get(0).reset();
       $el.unwrap();
 

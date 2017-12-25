@@ -7,7 +7,7 @@ class Common
 
     public static function setMessage($request, $type, $messages)
     {
-        $request->session()->flash('alertMsg', view('pb::errors.message')->with([
+        $request->session()->flash('alertMsg', view('pb::mod.alert_form')->with([
             'type' => $type,
             'messages' => $messages,
         ])->render());

@@ -14,34 +14,42 @@
 								<form enctype="multipart/form-data" method="POST" type="post" action="{{route('pb.updateProfile')}}">
 									<div class="clearfix form-inner">
                                         <div>
-                                            @includeIf('pb::mod.alert_danger', ['name' => 'error', 'display' => 'none'])
-                                            @includeIf('pb::mod.alert_success', ['name' => 'error', 'display' => 'block'])
+                                            {!! ($messages?:'') !!}
+<!--                                             @includeIf('pb::mod.alert_danger', ['name' => 'error', 'display' => 'none']) -->
+<!--                                             @includeIf('pb::mod.alert_success', ['name' => 'error', 'display' => 'block']) -->
                                         </div>
                                         <div class="form-group">
 											<label for="inputfullname">{{trans('messages.label.fullname')}}</label>
                                             <div class="input-group" style="width: 100%">
-                                              <input type="text" class="form-control" name="fullname" id="inputfullname">
+                                              <input type="text" class="form-control" name="fullname" id="inputfullname" value="@if(!empty($profile['fullname'])) {{$profile['fullname']}} @endif">
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="id_number">{{trans('messages.label.id_number')}}</label>
                                             <div class="input-group" style="width: 100%">
-                                              <input type="text" class="form-control" name="id_number" id="id_number">
+                                              <input type="text" class="form-control" name="id_number" id="id_number" value="@if(!empty($profile['id_number'])) {{$profile['id_number']}} @endif">
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="id_created_at">{{trans('messages.label.id_created_at')}}</label>
                                             <div class="input-group" style="width: 100%">
-                                              <input type="text" class="form-control" name="id_created_at" id="id_created_at">
+                                              <input type="text" class="form-control" name="id_created_at" id="id_created_at" value="@if(!empty($profile['id_created_at'])) {{$profile['id_created_at']}} @endif">
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="id_created_by">{{trans('messages.label.id_created_by')}}</label>
                                             <div class="input-group" style="width: 100%">
-                                              <input type="text" class="form-control" name="id_created_by" id="id_created_by">
+                                              <input type="text" class="form-control" name="id_created_by" id="id_created_by" value="@if(!empty($profile['id_created_by'])) {{$profile['id_created_by']}} @endif">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="address">{{trans('messages.label.address')}}</label>
+                                            <div class="input-group" style="width: 100%">
+                                              <input type="text" class="form-control" name="address" id="address" value="@if(!empty($profile['address'])) {{$profile['address']}} @endif">
                                             </div>
                                         </div>
 
@@ -50,6 +58,9 @@
                                             <div class="input-group" style="width: 100%">
                                                 <button id="pg-select-image" type="button" class="btn btn-flat"><span class="btn-inner">{{trans('messages.label.buttonSelect')}}</span></button>
     											<div id="pg-item-upload" style="margin-top: 10px;">
+                                                	@foreach($attachmentUrls as $url)
+                                                        <img src="{{$url}}" class="thumbnail" style="width:120px;display:inline;margin-right:10px;">
+                                                    @endforeach
     											</div>
     											<input type="file" name="images[]" class="hidden" id="pg-upload-image" multiple="multiple">
     										</div>

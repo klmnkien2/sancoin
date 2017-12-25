@@ -24,5 +24,7 @@ return [
         'reg_email_subject' => '[Sancoin] Registration notification email',
         'register_complete' => 'An email was sent to your registered address. Please register from the URL described in the email within 24 hours.',
         'need_loged_in' => 'You need to login for using this feature.',
+        'profile_upload_over_3' => 'You can upload up to 3 images.',
+        'up_profile_successfully' => 'Your profile has been updated successfully.',
     ],
 ];
