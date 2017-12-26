@@ -12,13 +12,16 @@ use Models\Attachment;
 use Models\Profile;
 use Auth, DB;
 use Illuminate\Support\Facades\Storage;
+use Modules\Pb\Services\WalletService;
 
 class WalletController extends BaseController
 {
 
-    public function __construct()
+    protected $walletService;
+
+    public function __construct(WalletService $walletService)
     {
-        //TODO
+        $this->walletService = $walletService;
     }
 
     public function profile(Request $request)
@@ -110,6 +113,8 @@ class WalletController extends BaseController
     public function eth(Request $request)
     {
         $messages = Common::getMessage($request);
+        $wallet = $this->walletService->getEthWallet(Auth::id());
+        dd($wallet);
 
         return view('pb::wallet.eth', compact('messages'));
     }

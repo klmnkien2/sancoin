@@ -113,7 +113,7 @@ class PbController extends BaseController
 
                     $user = $this->userService->createUser($request->get('username'), $request->get('email'), $request->get('password'));
                     if ($user) {
-                        Mail::to($request->get('email'))->send(new Registerred(['id' => $user->id, 'activate_code' => $user->activate_code]));
+                        //Mail::to($request->get('email'))->send(new Registerred(['id' => $user->id, 'activate_code' => $user->activate_code]));
                         $success = true;
                         break;
                     }
@@ -127,7 +127,6 @@ class PbController extends BaseController
             }
         } catch (\Exception $e) {
             LogService::write($request, $e);
-            dd($e);
             $error = [
                 'common' => [trans('messages.message.reg_common_fail')]
             ];
