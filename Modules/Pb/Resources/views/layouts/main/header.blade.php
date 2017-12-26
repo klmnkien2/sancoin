@@ -48,8 +48,9 @@
 				<ul class="nav navbar-nav">
 					<li class="exchange-link active"><a href="#">Exchange</a></li>
 					<li class="balances-link"><a href="#">Balances</a></li>
-<!-- 					<li class="trade-view-link"><a href="#">Trade View</a></li> -->
-<!-- 					<li class="my-funds-link"><a href="#">My Funds</a></li> -->
+					<li class="wallet-eth"><a href="{{route('pb.wallet.eth')}}">ETH</a></li>
+					<li class="wallet-btc"><a href="{{route('pb.wallet.btc')}}">BTC</a></li>
+					<li class="wallet-vnd"><a href="{{route('pb.wallet.vnd')}}">VND</a></li>
 					@if(!Auth::check())
 					<li class="signin-link"><a href="#" data-toggle="modal" data-target="#signinModal">Sign In</a></li>
 					<li class="register-link button-type"><a href="#" data-toggle="modal" data-target="#registerModal">Register</a></li>

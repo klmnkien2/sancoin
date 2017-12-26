@@ -1,0 +1,7 @@
+.address-tag {
+    width: 132px;
+    display: inline-block;
+    vertical-align: bottom;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

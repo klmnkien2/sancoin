@@ -55,16 +55,17 @@ class PbController extends BaseController
                 if (! $validator->fails()) {
                     if (Auth::guard('web')->attempt([
                         'username' => $request->get('username'),
-                        'password' => $request->get('password')
+                        'password' => $request->get('password'),
+                        'status' => [1, 2]
                     ])) {
                         $success = true;
                     } else {
                         $error = [
-                            trans('auth.failed')
+                            'common' => [trans('auth.failed')]
                         ];
                     }
                 } else {
-                    $error = $validator->getMessageBag();
+                    $error = $validator->getMessageBag()->getMessages();
                 }
             } catch (\Exception $e) {
                 LogService::write($request, $e);

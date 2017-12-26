@@ -18,6 +18,11 @@ if (check_domain(env('DOMAIN_PB'))) {
             Route::get('/logout', 'PbController@getLogout')->name('pb.logout');
             Route::get('/profile', 'WalletController@profile')->name('pb.getProfile');
             Route::post('/updateProfile', 'WalletController@updateProfile')->name('pb.updateProfile');
+            Route::group(['prefix' => 'wallet'], function () {
+                Route::get('/eth', 'WalletController@eth')->name('pb.wallet.eth');
+                Route::get('/btc', 'WalletController@btc')->name('pb.wallet.btc');
+                Route::get('/vnd', 'WalletController@vnd')->name('pb.wallet.vnd');
+            });
         });
     });
 }

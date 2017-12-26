@@ -21,10 +21,6 @@ class WalletController extends BaseController
         //TODO
     }
 
-    /**
-     * Display a listing of the resource.
-     * @return Response
-     */
     public function profile(Request $request)
     {
         $messages = Common::getMessage($request);
@@ -109,5 +105,12 @@ class WalletController extends BaseController
         }
 
         return redirect(route('pb.getProfile'));
+    }
+
+    public function eth(Request $request)
+    {
+        $messages = Common::getMessage($request);
+
+        return view('pb::wallet.eth', compact('messages'));
     }
 }
