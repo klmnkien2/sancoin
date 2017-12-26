@@ -12,6 +12,7 @@ use Auth;
 use Modules\Pb\Services\UserService;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Registerred;
+use App;
 
 class PbController extends BaseController
 {
@@ -92,23 +93,36 @@ class PbController extends BaseController
             $userValidator = new UserValidator();
             $validator = $this->checkValidator($request->all(), $userValidator->validateRegister());
             if (! $validator->fails()) {
-                $userNameExisted = User::where('username', '=', $request->get('username'))->first();
-                $emailExisted = User::where('email', $request->get('email'))->first();
-                if ($userNameExisted) {
-                    $error = [
-                        'common' => [trans('messages.message.reg_username_existed')]
-                    ];
-                } else if ($emailExisted) {
-                    $error = [
-                        'common' => [trans('messages.message.reg_email_existed')]
-                    ];
-                } else {
-                    //$this->userService->createUser($request->get('username'), $request->get('email'), $request->get('password'));
-                    Mail::to($request->get('email'))->send(new Registerred(['id' => 1, 'activate_code' => 'codemetounlock']));
-                    $success = true;
-                }
+                do {
+                    $userNameExisted = User::where('username', '=', $request->get('username'))->first();
+                    $emailExisted = User::where('email', $request->get('email'))->first();
+                    if ($userNameExisted) {
+                        $error = [
+                            'common' => [trans('messages.message.reg_username_existed')]
+                        ];
+                        break;
+                    }
+
+                    if ($emailExisted) {
+                        $error = [
+                            'common' => [trans('messages.message.reg_email_existed')]
+                        ];
+                        break;
+                    }
+
+                    $user = $this->userService->createUser($request->get('username'), $request->get('email'), $request->get('password'));
+                    if ($user) {
+                        Mail::to($request->get('email'))->send(new Registerred(['id' => $user->id, 'activate_code' => $user->activate_code]));
+                        $success = true;
+                        break;
+                    }
+
+                    // IF NOT SUCCESS THROW AN EXCEPTION
+                    throw new \Exception("Can't not create user");
+                    break;
+                } while (true);
             } else {
-                $error = $validator->getMessageBag();
+                $error = $validator->getMessageBag()->getMessages();
             }
         } catch (\Exception $e) {
             LogService::write($request, $e);
@@ -118,6 +132,7 @@ class PbController extends BaseController
             ];
         }
         return json_encode([
+            'redirect' => route('pb.pre_activate'),
             'success' => empty($success) ? false : $success,
             'error' => empty($error) ? []: $error
         ]);
@@ -130,7 +145,16 @@ class PbController extends BaseController
 
     public function activate($id, $code)
     {
-        return view('pb::reg_activate');
+        $user = app\User::find($id);
+        //dd($user);
+        if (!empty($user) && $user->activate_code == $code) {
+            $user->status = 1;
+            $user->save();
+            $message = trans('messages.message.register_completed');
+        } else {
+            $message = trans('messages.message.register_incompleted');
+        }
+        return view('pb::reg_activate', compact('message'));
     }
 
     protected function redirectToLogin($request, $message){

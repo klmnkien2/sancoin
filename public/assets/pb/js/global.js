@@ -27,7 +27,7 @@
       }).done(function (response) {
         var response = jQuery.parseJSON(response);
         if (response.success === true) {
-          //$.LoadingOverlay("hide");
+          form.find("span.error").html('');
           window.location.href = response.redirect;
         } else {
           if (!jQuery.isEmptyObject(response.error)) {
@@ -57,7 +57,7 @@
         var response = jQuery.parseJSON(response);
         if (response.success === true) {
           form.find("span.error").html('');
-          alert('Success, check your email to confirm.')
+          window.location.href = response.redirect;
         } else {
           if (!jQuery.isEmptyObject(response.error)) {
             for (key in response.error) {

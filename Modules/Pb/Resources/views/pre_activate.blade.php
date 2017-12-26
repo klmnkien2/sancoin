@@ -11,7 +11,7 @@
 								<h3 class="box-title"><strong class="title-inner">Notification</strong></h3>
 							</div>
 							<div class="clearfix box-body offer-form">
-								<p>{{ trans('messages.message.register_complete') }}</p>
+								<p>{{ trans('messages.message.registration_need_activate') }}</p>
 							</div>
 						</div>
 					</div>

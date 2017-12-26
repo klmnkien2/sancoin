@@ -18,7 +18,8 @@ class UserService
         $dataUser = [
             'email' => $email,
             'password' => Hash::make($password),
-            'username' => $username
+            'username' => $username,
+            'activate_code' => substr(md5($username . 'sancoinsaltstr'), 0, 8)
         ];
 
         $model = new User();
