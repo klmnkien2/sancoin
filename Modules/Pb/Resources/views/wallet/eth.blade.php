@@ -18,13 +18,13 @@
 												<div class="form-group">
 													<div class="input-group">
 														<div class="input-group-addon">{{trans('messages.label.available_eth')}}</div>
-														<div class="form-control">0.00002230 ETH</div>
+														<div class="form-control">{{ number_format($avaiableAmount/1000000000000000000, 18) }}</div>
 													</div>
 												</div>
 												<div class="form-group">
 													<div class="input-group">
 														<div class="input-group-addon">{{trans('messages.label.your_eth_addr')}}</div>
-														<div class="form-control">0x00000000000</div>
+														<div class="form-control">{{$walletAddress?:''}}</div>
 													</div>
 												</div>
 											</div>
@@ -36,6 +36,14 @@
 												<div class="input-group">
 													<div class="input-group-addon">{{trans('messages.label.amount')}}</div>
 													<input type="text" class="form-control" placeholder="ETH">
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="sr-only">{{trans('messages.label.to')}}</label>
+												<div class="input-group">
+													<div class="input-group-addon">{{trans('messages.label.to')}}</div>
+													<input type="text" class="form-control" placeholder="Address">
 												</div>
 											</div>
 
@@ -67,32 +75,32 @@
 								<div class="custom-scrollbar">
 									<div class="clearfix table-wrap">
 										<table class="table table-striped">
-											<tr>
-												<th class="change"></th>
-												<th>{{trans('messages.label.txhash')}}</th>
-												<th>{{trans('messages.label.date_time')}}</th>
-												<th>{{trans('messages.label.from')}}</th>
-												<th>{{trans('messages.label.to')}}</th>
-												<th class="number">{{trans('messages.label.value')}}</th>
-											</tr>
+											<thead>
+    											<tr>
+    												<th class="change"></th>
+    												<th>{{trans('messages.label.txhash')}}</th>
+    												<th>{{trans('messages.label.date_time')}}</th>
+    												<th>{{trans('messages.label.from')}}</th>
+    												<th>{{trans('messages.label.to')}}</th>
+    												<th class="number">{{trans('messages.label.value')}}</th>
+    											</tr>
 											</thead>
 											<tbody>
-											<tr>
-												<td class="change"><span class="fa fa-arrow-circle-o-up"></span></td>
-												<td><span class="address-tag">0x17cb4341ef4d9132f9c86b335f6dd6010f6aea9a</span></td>
-												<td>17 Seconds Ago</td>
-												<td><span class="address-tag">0x17cb4341ef4d9132f9c86b335f6dd6010f6aea9a</span></td>
-												<td><span class="address-tag">0x17cb4341ef4d9132f9c86b335f6dd6010f6aea9a</span></td>
-												<td class="number">0.02526615</td>
-											</tr>
-											<tr>
-												<td class="change"><span class="fa fa-arrow-circle-o-down"></span></td>
-												<td><span class="address-tag">0x17cb4341ef4d9132f9c86b335f6dd6010f6aea9a</span></td>
-												<td>17 Seconds Ago</td>
-												<td><span class="address-tag">0x17cb4341ef4d9132f9c86b335f6dd6010f6aea9a</span></td>
-												<td><span class="address-tag">0x17cb4341ef4d9132f9c86b335f6dd6010f6aea9a</span></td>
-												<td class="number">0.02526615</td>
-											</tr>
+												@foreach ($transactionHistory as $transaction)
+    											<tr>
+        											@if ($transaction['from'] == $walletAddress)
+        												<td class="change"><span class="fa fa-arrow-circle-o-up"></span></td>
+    												@else
+    													<td class="change"><span class="fa fa-arrow-circle-o-down"></span></td>
+    												@endif
+    												<td><span class="address-tag">{{$transaction['hash']}}</span></td>
+    												<td>{{ Carbon\Carbon::createFromTimestamp($transaction['timeStamp'])->diffForHumans() }}</td>
+    												<td><span class="address-tag">{{$transaction['from']}}</span></td>
+    												<td><span class="address-tag">{{$transaction['to']}}</span></td>
+    												<td class="number">{{ number_format(floatval($transaction['value'])/1000000000000000000, 18) }}</td>
+    											</tr>
+    											@endforeach
+											</tbody>
 										</table>
 									</div>
 								</div>

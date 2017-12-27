@@ -13,15 +13,18 @@ use Models\Profile;
 use Auth, DB;
 use Illuminate\Support\Facades\Storage;
 use Modules\Pb\Services\WalletService;
+use Modules\Pb\Services\EtherscanService;
 
 class WalletController extends BaseController
 {
 
     protected $walletService;
+    protected $etherscanService;
 
-    public function __construct(WalletService $walletService)
+    public function __construct(WalletService $walletService, EtherscanService $etherscanService)
     {
         $this->walletService = $walletService;
+        $this->etherscanService = $etherscanService;
     }
 
     public function profile(Request $request)
@@ -113,9 +116,28 @@ class WalletController extends BaseController
     public function eth(Request $request)
     {
         $messages = Common::getMessage($request);
-        $wallet = $this->walletService->getEthWallet(Auth::id());
-        dd($wallet);
+        $walletAddress = '0x0';
+        $avaiableAmount = 0;
+        $transactionHistory = [];
 
-        return view('pb::wallet.eth', compact('messages'));
+        $wallet = $this->walletService->getEthWallet(Auth::id());
+        //dd($wallet);
+
+        if (!empty($wallet)) {
+            $walletAddress = '0x' . $wallet->address;
+            $res = $this->etherscanService->getBalance($walletAddress);
+            if (!empty($res['result'])) {
+                $avaiableAmount = $res['result'];
+            }
+
+            //get transaction
+            $res = $this->etherscanService->getTransactions($walletAddress, 1);
+            if (!empty($res['result'])) {
+                $transactionHistory = $res['result'];
+            }
+            //dd($transactionHistory);
+        }
+
+        return view('pb::wallet.eth', compact('messages', 'walletAddress', 'avaiableAmount', 'transactionHistory'));
     }
 }

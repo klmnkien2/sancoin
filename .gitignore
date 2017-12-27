@@ -13,3 +13,5 @@ yarn-error.log
 .settings/
 .project
 .buildpath
+/resources/assets/sancoin_nodejs/node_modules
+/resources/assets/sancoin_nodejs/package-lock.json

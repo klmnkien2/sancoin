@@ -20,8 +20,8 @@ class WalletService
         if (empty($wallet)) {
             $this->selectNodejsFolder();
             $nodeRunPath = $this->nodeRunPath();
-            $cmd = exec("$nodeRunPath script.js generateAccount 12345678a@ 2>&1", $out, $err);
-            dd($err, $out);
+            $cmd = exec("\"$nodeRunPath\" script.js generateAccount 12345678a@ 2>&1", $out, $err);
+            //dd($err, $out);
             $cmdResult = null;
             foreach ($out as $line) {
                 if(0 === strpos($line, '<SANCOIN>')) {
@@ -43,13 +43,13 @@ class WalletService
 
     private function selectNodejsFolder()
     {
-        $nodejs_folder = resource_path('assets/nodejs/sancoin/');
+        $nodejs_folder = resource_path('assets/sancoin_nodejs/');
         chdir($nodejs_folder);
     }
 
     private function nodeRunPath()
     {
-        return 'node';
+        return storage_path('app/nodewin/node');
     }
 
 }
