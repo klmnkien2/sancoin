@@ -19,11 +19,6 @@ class EtherscanService
     dailycoin.etherscan_api_url: "https://api.etherscan.io/api"
     dailycoin.etherscan_api_key: "P4V3KFV9VYDB76YD6V5YEGYBAYC8W5VIIE"
 
-    dailycoin.blockcypher_token: "93008b2de1ac4b3cba7455ac17baa930"
-    #TEST
-    #dailycoin.owner_btc_addr: "mfnxyZ3oicHxj26RzKCdPsayN6BiH4vnRp"
-    #REAL
-    dailycoin.owner_btc_addr: "1JfQDuT5Qoht5VNebHi2ZLo8SLXHJ9VP5m"
      */
     protected $url = 'https://ropsten.etherscan.io/api';
 
