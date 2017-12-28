@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEthWalletsTable extends Migration
+class CreateBtcWalletsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateEthWalletsTable extends Migration
      */
     public function up()
     {
-        Schema::create('eth_wallets', function (Blueprint $table) {
+        Schema::create('btc_wallets', function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('user_id')->unique();
             $table->string('address', 500)->nullable();
-            $table->string('private_key', 500)->nullable();
+            $table->string('private', 500)->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateEthWalletsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eth_wallets');
+        Schema::dropIfExists('btc_wallets');
     }
 }

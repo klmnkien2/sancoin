@@ -5,13 +5,15 @@ namespace Modules\Pb\Services;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Models\EthWallet;
+use Models\BtcWallet;
 
 class WalletService
 {
 
-    public function __construct()
+    protected $bitcoinService;
+    public function __construct(BitcoinService $bitcoinService)
     {
-        //TODO
+        $this->bitcoinService = $bitcoinService;
     }
 
     public function getEthWallet($userId)
@@ -52,5 +54,22 @@ class WalletService
         return storage_path('app/nodewin/node');
     }
 
+    public function getBtcWallet($userId)
+    {
+        $wallet = BtcWallet::where('user_id', $userId)->first();
+        if (empty($wallet)) {
+            $bitcoin = $this->bitcoinService->generateAddress();
+            if (empty($bitcoin)) {
+                throw new \Exception("Can't create bitcoin address blockcypher.");
+            }
+
+            $data = $bitcoin;
+            $data['user_id'] = $userId;
+
+            $wallet = BtcWallet::create($data);
+        }
+
+        return $wallet;
+    }
 }
 

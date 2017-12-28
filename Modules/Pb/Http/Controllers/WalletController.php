@@ -100,7 +100,7 @@ class WalletController extends BaseController
         } catch (\Exception $e) {
             LogService::write($request, $e);
             DB::rollback();
-            dd($e);
+            //dd($e);
             $error = [
                 'common' => [trans('messages.message.reg_common_fail')]
             ];
@@ -151,21 +151,18 @@ class WalletController extends BaseController
         $avaiableAmount = 0;
         $transactionHistory = [];
 
-        $wallet = $this->walletService->getEthWallet(Auth::id());
+        $wallet = $this->walletService->getBtcWallet(Auth::id());
         //dd($wallet);
 
         if (!empty($wallet)) {
-            $walletAddress = '0x' . $wallet->address;
-            $res = $this->etherscanService->getBalance($walletAddress);
-            if (!empty($res['result'])) {
-                $avaiableAmount = $res['result'];
-            }
+            $walletAddress = $wallet->address;
+            $avaiableAmount = $this->bitcoinService->getBalance($walletAddress);
 
             //get transaction
-            $res = $this->etherscanService->getTransactions($walletAddress, 1);
-            if (!empty($res['result'])) {
-                $transactionHistory = $res['result'];
-            }
+//             $res = $this->etherscanService->getTransactions($walletAddress, 1);
+//             if (!empty($res['result'])) {
+//                 $transactionHistory = $res['result'];
+//             }
             //dd($transactionHistory);
         }
 

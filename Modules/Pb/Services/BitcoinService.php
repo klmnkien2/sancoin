@@ -6,6 +6,7 @@ use BlockCypher\Auth\SimpleTokenCredential;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Rest\ApiContext;
 use BlockCypher\Validation\TokenValidator;
+use App\Services\LogService;
 
 class BitcoinService
 {
@@ -35,19 +36,34 @@ class BitcoinService
     public function getBalance($addr)
     {
         $apiContexts = $this->initApiContext();
-        $addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
-        //$addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.test3']);
+        //$addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
+        $addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.test3']);
         try {
             $addressBalance = $addressClient->getBalance($addr);
             //var_dump($addressBalance);die();
             return $addressBalance->getBalance();
         } catch (\Exception $ex) {
-            // var_dump($ex->getMessage());die();
+            LogService::write($request, $ex);
             return 0;
         }
     }
 
-    public function buyToken($fromAddress, $private, $toAddress, $amount)
+    public function getEndpoint($addr)
+    {
+        $apiContexts = $this->initApiContext();
+        //$addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
+        $addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.test3']);
+        try {
+            $addressBalance = $addressClient->getBalance($addr);
+            //var_dump($addressBalance);die();
+            return $addressBalance->getBalance();
+        } catch (\Exception $ex) {
+            LogService::write($request, $ex);
+            return 0;
+        }
+    }
+
+    public function send($fromAddress, $private, $toAddress, $amount)
     {
         $apiContexts = $this->initApiContext();
         /// Tx inputs
@@ -64,7 +80,8 @@ class BitcoinService
         $tx->addInput($input);
         $tx->addOutput($output);
 
-        $txClient = new \BlockCypher\Client\TXClient($apiContexts['BTC.main']);
+        $txClient = new \BlockCypher\Client\TXClient($apiContexts['BTC.test3']);
+        //$txClient = new \BlockCypher\Client\TXClient($apiContexts['BTC.main']);
 
         try {
             $txSkeleton = $txClient->create($tx);
@@ -80,7 +97,7 @@ class BitcoinService
 
             return $txSkeleton->getTx()->getHash();
         } catch (\Exception $ex) {
-            //var_dump($private, $ex->getMessage());
+            LogService::write($request, $ex);
             return false;
         }
     }
@@ -88,8 +105,8 @@ class BitcoinService
     public function generateAddress()
     {
         $apiContexts = $this->initApiContext();
+        $addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.test3']);
         //$addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
-        $addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
         try {
 
             $addressKeyChain = $addressClient->generateAddress();
@@ -100,7 +117,7 @@ class BitcoinService
                 'wif' => $addressKeyChain->getWif(),
             ];
         } catch (\Exception $ex) {
-            //var_dump($ex->getMessage());die();
+            LogService::write($request, $ex);
             return null;
         }
     }
@@ -156,7 +173,7 @@ class BitcoinService
         $config = array(
             'mode' => 'sandbox',
             'log.LogEnabled' => true,
-            'log.FileName' => '../BlockCypher.log',
+            'log.FileName' => storage_path('logs/sancoin_blockcypher.log'),
             'log.LogLevel' => 'DEBUG', // PLEASE USE `INFO` LEVEL FOR LOGGING IN LIVE ENVIRONMENTS
             'validation.level' => 'log',
             // 'http.CURLOPT_CONNECTTIMEOUT' => 30

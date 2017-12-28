@@ -18,7 +18,7 @@
 												<div class="form-group">
 													<div class="input-group">
 														<div class="input-group-addon">{{trans('messages.label.available_btc')}}</div>
-														<div class="form-control">{{ number_format($avaiableAmount/1000000000000000000, 18) }}</div>
+														<div class="form-control">{{ number_format($avaiableAmount/100000000, 8) }}</div>
 													</div>
 												</div>
 												<div class="form-group">
