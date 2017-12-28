@@ -23,6 +23,13 @@ if (check_domain(env('DOMAIN_PB'))) {
                 Route::get('/btc', 'WalletController@btc')->name('pb.wallet.btc');
                 Route::get('/vnd', 'WalletController@vnd')->name('pb.wallet.vnd');
             });
+            Route::group(['prefix' => 'order'], function () {
+                Route::get('/', 'OrderController@index')->name('pb.order.index');
+                Route::get('/mine', 'OrderController@mine')->name('pb.order.mine');
+                Route::post('/create', 'OrderController@create')->name('pb.order.create');
+                Route::post('/transfer', 'OrderController@transfer')->name('pb.order.transfer');
+            });
+            Route::get('/all/{type}', 'OrderController@all')->name('pb.order.all');
         });
     });
 }
