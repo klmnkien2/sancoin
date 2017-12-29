@@ -19,7 +19,7 @@ class CreateVndWalletsTable extends Migration
             $table->string('account_name', 500)->nullable();
             $table->string('account_number', 500)->nullable();
             $table->string('bank_branch', 500)->nullable();
-            $table->bigInteger('amount', false, true)->default(0);
+            $table->string('amount', 100)->default("");
             $table->timestamps();
         });
     }

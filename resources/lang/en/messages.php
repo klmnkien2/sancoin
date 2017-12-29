@@ -32,6 +32,11 @@ return [
         'from' => 'From',
         'to' => 'To',
         'value' => 'Value',
+        'available' => 'Available',
+        'vnd_wallet' => 'VND Wallet',
+        'account_number' => 'Account\'s number',
+        'bank_branch' => 'Bank\'s branch',
+        'buttonUpdate' => 'Update',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -44,5 +49,7 @@ return [
         'need_loged_in' => 'You need to login for using this feature.',
         'profile_upload_over_3' => 'You can upload up to 3 images.',
         'up_profile_successfully' => 'Your profile has been updated successfully.',
+        'vnd_wallet_update_notice' => 'You need to update wallet\'s information for a successfull withdraw.',
+        'vnd_wallet_update_notice' => 'You need to update wallet\'s information for a successfull withdraw.',
     ],
 ];

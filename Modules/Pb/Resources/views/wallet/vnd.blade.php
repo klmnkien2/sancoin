@@ -46,6 +46,8 @@
                                                 <button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonUpdate')}}</span></button>
                                             </div>
 
+                                            <div class="service-fee-text">{{trans('messages.message.vnd_wallet_update_notice')}}</div>
+
                                             <div class="hr-text"><span>{{trans('messages.label.withdraw')}}</span><hr></div>
 
                                             <div class="form-group">
