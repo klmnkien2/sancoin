@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use App\User;
 use Models\EthWallet;
 use Models\BtcWallet;
+use Models\VndWallet;
+use Models\Profile;
 
 class WalletService
 {
@@ -67,6 +69,25 @@ class WalletService
             $data['user_id'] = $userId;
 
             $wallet = BtcWallet::create($data);
+        }
+
+        return $wallet;
+    }
+
+    public function getVndWallet($userId)
+    {
+        $wallet = VndWallet::where('user_id', $userId)->first();
+        if (empty($wallet)) {
+
+            $data = [
+                'user_id' => $userId
+            ];
+
+            $profile = Profile::where('user_id', $userId)->first();
+            if (!empty($profile)) {
+                $data['name'] = $profile['fullname'];
+            }
+            $wallet = VndWallet::create($data);
         }
 
         return $wallet;

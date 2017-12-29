@@ -168,4 +168,14 @@ class WalletController extends BaseController
 
         return view('pb::wallet.btc', compact('messages', 'walletAddress', 'avaiableAmount', 'transactionHistory'));
     }
+
+    public function vnd(Request $request)
+    {
+        $messages = Common::getMessage($request);
+        $transactionHistory = [];
+
+        $wallet = $this->walletService->getVndWallet(Auth::id());
+
+        return view('pb::wallet.vnd', compact('messages', 'wallet', 'transactionHistory'));
+    }
 }
