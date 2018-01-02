@@ -1,6 +1,7 @@
 <?php
 use \Illuminate\Support\Facades\Request;
-use \Carbon\Carbon;
+use GuzzleHttp\Client;
+use Models\Currency;
 
 if (!function_exists('getBrowserLocale')) {
     function getBrowserLocale()
@@ -281,5 +282,36 @@ if (!function_exists('get_string_between')) {
         $ini += strlen($start);
         $len = strpos($string, $end, $ini) - $ini;
         return substr($string, $ini, $len);
+    }
+}
+
+if (!function_exists('get_currencies')) {
+    function get_currencies()
+    {
+        //BTC
+        $returnResults = [];
+        $client = new Client();
+        $response = $client->get("https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD");
+        $json = $response->getBody();
+        $aResult = json_decode($json, TRUE);
+        $returnResults['BTC'] = ['lastest' => $aResult['USD']];
+        $btcPriceInDB = Currency::where('symbol', 'BTC')->orderBy('created_at')->first();
+        if (empty($btcPriceInDB) || $btcPriceInDB['to_usd'] != $aResult['USD']) {
+            Currency::create(['name' => 'BTC', 'symbol' => 'BTC', 'to_usd' => $aResult['USD']]);
+        }
+
+        //ETH
+        $response = $client->get("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD");
+        $json = $response->getBody();
+        $aResult = json_decode($json, TRUE);
+        $ethPrice = $aResult['USD'];
+        $returnResults['ETH'] = ['lastest' => $aResult['USD']];
+        $ethPriceInDB = Currency::where('symbol', 'ETH')->orderBy('created_at')->first();
+        if (empty($ethPriceInDB) || $ethPriceInDB['to_usd'] != $aResult['USD']) {
+            Currency::create(['name' => 'ETH', 'symbol' => 'ETH', 'to_usd' => $aResult['USD']]);
+        }
+
+        //dd($returnResults);
+        return $returnResults;
     }
 }

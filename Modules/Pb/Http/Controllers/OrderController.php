@@ -35,6 +35,9 @@ class OrderController extends BaseController
     {
         $tabActive = $request->get('tab', 'buy');//default
 
+        //my orders
+        $myOrders = Order::where(['user_id' => Auth::id()])->orderBy('created_at', 'desc')->paginate(2);
+
         //ETH
         $ethWallet = $this->walletService->getEthWallet(Auth::id());
         $ethAddress = '0x' . $ethWallet->address;
@@ -56,13 +59,31 @@ class OrderController extends BaseController
         $inOrderVND = Order::where(['status' => 'waiting', 'user_id' => Auth::id(), 'order_type' => 'buy'])->sum('amount');
         $availableVND = $vndWallet->amount - $inOrderVND;
         $messages = Common::getMessage($request);
-        return view('pb::order.index', compact('messages', 'tabActive', 'ethAddress', 'availableETH', 'btcAddress', 'availableBTC', 'availableVND'));
+        return view('pb::order.index', compact('messages', 'tabActive', 'ethAddress', 'availableETH', 'btcAddress', 'availableBTC', 'availableVND', 'myOrders'));
     }
 
     public function all(Request $request, $type)
     {
         $messages = Common::getMessage($request);
         return view('pb::order.all', compact('messages'));
+    }
+
+    public function cancel(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            Order::delete($id);
+            DB::commit();
+        } catch (\Exception $e) {
+            LogService::write($request, $e);
+            DB::rollback();
+            $error = [
+                'common' => [trans('messages.message.cancel_order_fail')]
+            ];
+            Common::setMessage($request, 'error', $error);
+        }
+        Common::setMessage($request, 'success', ['common' => [trans('messages.message.cancel_order_successfully')]]);
+        return redirect(route('pb.order.index') . '?tab=myorder');
     }
 
     public function create(Request $request)
@@ -114,7 +135,7 @@ class OrderController extends BaseController
                     }
                     if ($data['coin_type'] == 'btc') {
                         $data['coin_amount'] = $data['coin_amount_btc'];
-                    } else if ($date['coin_type'] == 'eth') {
+                    } else if ($data['coin_type'] == 'eth') {
                         $data['coin_amount'] = $data['coin_amount_eth'];
                     }
                     $data['user_id'] = Auth::id();

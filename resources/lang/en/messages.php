@@ -42,7 +42,11 @@ return [
         'you_spend' => 'you spend',
         'you_receive' => 'you receive',
         'service_fee' => 'Service fee',
-        'inorder' => 'In ordering'
+        'inorder' => 'In ordering',
+        'status_none' => 'N/A',
+        'status_waiting' => 'Waiting',
+        'status_pending' => 'Pending',
+        'status_done' => 'Done',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -58,6 +62,8 @@ return [
         'vnd_wallet_update_notice' => 'You need to update wallet\'s information for a successfull withdraw.',
         'order_not_enough_money' => 'You haven\'t enough :money. You may spent too much for other orders. Please check your created orders for detail.',
         'available_money_notice' => 'Available currencies already subbed your spent in other orders.',
-        'order_successfully' => 'Your order has been created successfully.'
+        'order_successfully' => 'Your order has been created successfully.',
+        'cancel_order_successfully' => 'Cancelled order successfully.',
+        'cancel_order_fail' => 'Cancelled order fail.',
     ],
 ];

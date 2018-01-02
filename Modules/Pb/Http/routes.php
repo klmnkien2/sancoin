@@ -28,6 +28,7 @@ if (check_domain(env('DOMAIN_PB'))) {
                 Route::get('/mine', 'OrderController@mine')->name('pb.order.mine');
                 Route::post('/create', 'OrderController@create')->name('pb.order.create');
                 Route::post('/transfer', 'OrderController@transfer')->name('pb.order.transfer');
+                Route::post('/cancel/{id}', 'OrderController@cancel')->name('pb.order.cancel');
             });
             Route::get('/all/{type}', 'OrderController@all')->name('pb.order.all');
         });

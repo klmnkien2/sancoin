@@ -13,3 +13,7 @@
 .order-message {
 	padding: 20px 20px 0px 20px;
 }
+
+.del-link {
+	color: red;
+}
