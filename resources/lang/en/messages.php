@@ -37,6 +37,12 @@ return [
         'account_number' => 'Account\'s number',
         'bank_branch' => 'Bank\'s branch',
         'buttonUpdate' => 'Update',
+        'transfer_coin_type' => 'BTC/ETH',
+        'please_select' => 'Please select',
+        'you_spend' => 'you spend',
+        'you_receive' => 'you receive',
+        'service_fee' => 'Service fee',
+        'inorder' => 'In ordering'
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -50,6 +56,8 @@ return [
         'profile_upload_over_3' => 'You can upload up to 3 images.',
         'up_profile_successfully' => 'Your profile has been updated successfully.',
         'vnd_wallet_update_notice' => 'You need to update wallet\'s information for a successfull withdraw.',
-        'vnd_wallet_update_notice' => 'You need to update wallet\'s information for a successfull withdraw.',
+        'order_not_enough_money' => 'You haven\'t enough :money. You may spent too much for other orders. Please check your created orders for detail.',
+        'available_money_notice' => 'Available currencies already subbed your spent in other orders.',
+        'order_successfully' => 'Your order has been created successfully.'
     ],
 ];
