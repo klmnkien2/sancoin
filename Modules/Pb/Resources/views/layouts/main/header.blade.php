@@ -76,10 +76,10 @@
                 <?php $btcCurrency = get_currencies('BTC');?>
                 <ul class="clearfix tradestats">
                     <li><strong>Latest</strong>: <span class="last">{{$btcCurrency['lastest']}}</span></li>
-                    <li><span class="change"><span class="fa fa-arrow-circle-o-up"></span> {{$btcCurrency['change_percentage']}}%</span></li>
+                    <li><span class="change"><span class="fa fa-arrow-circle-o-up"></span> {{ number_format($btcCurrency['change_percentage'], 2)}}%</span></li>
                     <li><strong>High</strong>: <span class="high">{{$btcCurrency['high']}}</span></li>
                     <li><strong>Low</strong>: <span class="low">{{$btcCurrency['low']}}</span></li>
-                    <li><strong>Avg</strong>: <span class="avg">{{$btcCurrency['avg']}}</span></li>
+                    <li><strong>Avg</strong>: <span class="avg">{{number_format($btcCurrency['avg'], 2)}}</span></li>
                 </ul>
             </div>
             <div id="select-market">

@@ -289,10 +289,10 @@ if (!function_exists('get_string_between')) {
 if (!function_exists('get_currencies')) {
     function get_currencies($symbol)
     {
-        $returnResults = Cache::get('currency-' . $symbol);
-        if (!empty($returnResults)) {
-            return $returnResults;
-        }
+//         $returnResults = Cache::get('currency-' . $symbol);
+//         if (!empty($returnResults)) {
+//             return $returnResults;
+//         }
 
         $returnResults = [];
         $client = new Client();
@@ -313,15 +313,15 @@ if (!function_exists('get_currencies')) {
 
         if (empty($first) || $first != $aResult['USD']) {
             Currency::create(['name' => $symbol, 'symbol' => $symbol, 'to_usd' => $aResult['USD']]);
-            $first = $aResult['USD'];
             if (!empty($first)) {
                 $second = $first;
             }
+            $first = $aResult['USD'];
         }
-
+        //dd($first, $second);
         $returnResults['change_percentage'] = 0;
         if (!empty($second)) {
-            $returnResults['change_percentage'] = ($first - $second) * 100 / $second;
+            $returnResults['change_percentage'] = (floatval($first) - floatval($second)) * 100 / floatval($second);
         }
 
         $returnResults['high'] = Currency::where('symbol', $symbol)->max('to_usd');
