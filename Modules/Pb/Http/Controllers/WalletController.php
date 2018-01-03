@@ -156,7 +156,9 @@ class WalletController extends BaseController
 
         if (!empty($wallet)) {
             $walletAddress = $wallet->address;
-            $avaiableAmount = $this->bitcoinService->getBalance($walletAddress);
+            $fullAddress = $this->bitcoinService->getAllInfo($walletAddress);
+            $avaiableAmount = $fullAddress['balance'];
+            $transactionHistory = $fullAddress['txs'];
 
             //get transaction
 //             $res = $this->etherscanService->getTransactions($walletAddress, 1);

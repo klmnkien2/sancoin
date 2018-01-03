@@ -8,10 +8,11 @@ class LogService
 {
     public static function write($request, \Exception $exception)
     {
-        try {
+        if (empty($request)) {
+            dd($exception);
+            Log::error($exception);
+        } else {
             Log::error($exception, [$request->getMethod() => $request->url()]);
-        } catch (\Exception $e) {
-            return response()->view('errors.500', [], 500);
         }
     }
 

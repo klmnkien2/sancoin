@@ -43,24 +43,55 @@ class BitcoinService
             //var_dump($addressBalance);die();
             return $addressBalance->getBalance();
         } catch (\Exception $ex) {
-            LogService::write($request, $ex);
+            LogService::write(null, $ex);
             return 0;
         }
     }
 
-    public function getEndpoint($addr)
+    public function getAllInfo($addr)
     {
+        $returnResult = [];
         $apiContexts = $this->initApiContext();
         //$addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
         $addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.test3']);
         try {
-            $addressBalance = $addressClient->getBalance($addr);
-            //var_dump($addressBalance);die();
-            return $addressBalance->getBalance();
+            $fullAddress = $addressClient->getFullAddress($addr);
+            //dd($fullAddress->getTxs());
+            $returnResult['balance'] = $fullAddress->getBalance();
+            $returnResult['txs'] = [];
+            foreach ($fullAddress->getTxs() as $tx) {
+                $transaction = [];
+                $transaction['hash'] = $tx->getHash();
+                //$addresses = $tx->getAddresses();
+
+                $transaction['to'] = $tx->getOutputs()[0]->getAddresses()[0];
+                $transaction['from'] = $tx->getInputs()[0]->getAddresses()[0];
+                if ($transaction['to'] == $addr) {
+                    $transaction['value'] = $tx->getOutputs()[0]->getValue();
+                }
+                if ($transaction['from'] == $addr) {
+                    $transaction['value'] = $tx->getInputs()[0]->getOutputValue();
+                }
+
+                $transaction['received'] = $tx->getReceived();
+                try {
+                    $transaction['received'] = \Carbon\Carbon::createFromFormat("Y-m-d\TH:i:s\Z", $transaction['received']);
+                } catch(\Exception $exxx) {
+                    //dd($transaction['received'],$exxx);
+                }
+                try {
+                    $transaction['received'] = \Carbon\Carbon::createFromFormat("Y-m-d\TH:i:s.u\Z", $transaction['received']);
+                } catch(\Exception $exxx) {
+                    //dd($transaction['received'],$exxx);
+                }
+                $returnResult['txs'][] = $transaction;
+            }
         } catch (\Exception $ex) {
-            LogService::write($request, $ex);
-            return 0;
+            LogService::write(null, $ex);
         }
+
+        //dd($returnResult);
+        return $returnResult;
     }
 
     public function send($fromAddress, $private, $toAddress, $amount)
@@ -97,7 +128,7 @@ class BitcoinService
 
             return $txSkeleton->getTx()->getHash();
         } catch (\Exception $ex) {
-            LogService::write($request, $ex);
+            LogService::write(null, $ex);
             return false;
         }
     }
@@ -117,7 +148,7 @@ class BitcoinService
                 'wif' => $addressKeyChain->getWif(),
             ];
         } catch (\Exception $ex) {
-            LogService::write($request, $ex);
+            LogService::write(null, $ex);
             return null;
         }
     }

@@ -93,11 +93,11 @@
     												@else
     													<td class="change"><span class="fa fa-arrow-circle-o-down"></span></td>
     												@endif
-    												<td><span class="address-tag">{{$transaction['hash']}}</span></td>
-    												<td>{{ Carbon\Carbon::createFromTimestamp($transaction['timeStamp'])->diffForHumans() }}</td>
-    												<td><span class="address-tag">{{$transaction['from']}}</span></td>
-    												<td><span class="address-tag">{{$transaction['to']}}</span></td>
-    												<td class="number">{{ number_format(floatval($transaction['value'])/1000000000000000000, 18) }}</td>
+    												<td><span class="address-tag" title="{{$transaction['hash']}}">{{$transaction['hash']}}</span></td>
+    												<td>{{ $transaction['received']->diffForHumans() }}</td>
+    												<td><span class="address-tag" title="{{$transaction['from']}}">{{$transaction['from']}}</span></td>
+    												<td><span class="address-tag" title="{{$transaction['to']}}">{{$transaction['to']}}</span></td>
+    												<td class="number">{{ number_format(floatval($transaction['value'])/100000000, 8) }}</td>
     											</tr>
     											@endforeach
 											</tbody>
