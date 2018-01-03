@@ -20,6 +20,9 @@ class CreateOrdersTable extends Migration
             $table->char('order_type', 10);
             $table->char('coin_type', 10);
             $table->string('coin_amount', 100);
+            $table->string('coin_to_usd', 100);
+            $table->string('usd_to_vnd', 100);
+            $table->string('coin_to_vnd', 100);
             $table->string('hash', 100)->nullable();
             $table->char('hash_status', 10)->nullable();
             $table->string('amount', 100);

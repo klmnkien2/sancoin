@@ -8,6 +8,7 @@ use Modules\Pb\Helper\Common;
 use Modules\Pb\Validators\UserValidator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\User;
+use Models\Order;
 use Auth;
 use Modules\Pb\Services\UserService;
 use Illuminate\Support\Facades\Mail;
@@ -30,7 +31,11 @@ class PbController extends BaseController
      */
     public function index()
     {
-        return view('pb::index');
+        $listSeller = Order::where('order_type', 'sell')->orderBy('created_at', 'desc')->paginate(10);
+        $listBuyer = Order::where('order_type', 'buy')->orderBy('created_at', 'desc')->paginate(10);
+//         dd($listSeller, $listBuyer);
+
+        return view('pb::index')->with(compact('listSeller', 'listBuyer'));
     }
 
     public function getLogin(Request $request)

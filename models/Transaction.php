@@ -19,6 +19,8 @@ class Transaction extends Model
 
     protected $fillable = [
         'id',
+        'order_id',
+        'type',
         'from_id',
         'from_account',
         'to_id',

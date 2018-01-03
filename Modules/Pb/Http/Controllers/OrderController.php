@@ -71,8 +71,40 @@ class OrderController extends BaseController
 
     public function all(Request $request, $type)
     {
+        if ($type == 'sell') {
+            $listSeller = Order::where('order_type', 'sell')->orderBy('created_at', 'desc')->paginate(10);
+            $total = Order::where('order_type', 'sell')->count();
+            $pagination = [
+                'total' => $total,
+                'page' => $request->get('page', 1),
+                'per' => 10,
+                'condition' => $request->all()
+            ];
+            return view('pb::order.all_sell', compact('listSeller', 'pagination'));
+        } else if ($type == 'buy') {
+            $listBuyer = Order::where('order_type', 'buy')->orderBy('created_at', 'desc')->paginate(10);
+            $total = Order::where('order_type', 'buy')->count();
+            $pagination = [
+                'total' => $total,
+                'page' => $request->get('page', 1),
+                'per' => 10,
+                'condition' => $request->all()
+            ];
+            return view('pb::order.all_buy', compact('listBuyer', 'pagination'));
+        }
+    }
+
+    public function detail(Request $request, $id)
+    {
+        $order = Order::find($id);
+        if (empty($order)) {
+            $error = [
+                'common' => [trans('messages.message.no_order_found')]
+            ];
+            Common::setMessage($request, 'error', $error);
+        }
         $messages = Common::getMessage($request);
-        return view('pb::order.all', compact('messages'));
+        return view('pb::order.detail', compact('order', 'messages'));
     }
 
     public function cancel(Request $request, $id)

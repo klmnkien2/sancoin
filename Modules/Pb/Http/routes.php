@@ -25,7 +25,7 @@ if (check_domain(env('DOMAIN_PB'))) {
             });
             Route::group(['prefix' => 'order'], function () {
                 Route::get('/', 'OrderController@index')->name('pb.order.index');
-                Route::get('/mine', 'OrderController@mine')->name('pb.order.mine');
+                Route::match(array('GET','POST'), '/detail/{id}', 'OrderController@detail')->name('pb.order.detail');
                 Route::post('/create', 'OrderController@create')->name('pb.order.create');
                 Route::post('/transfer', 'OrderController@transfer')->name('pb.order.transfer');
                 Route::post('/cancel/{id}', 'OrderController@cancel')->name('pb.order.cancel');

@@ -23,6 +23,9 @@ class Order extends Model
         'order_type',
         'coin_type',
         'coin_amount',
+        'coin_to_usd',
+        'usd_to_vnd',
+        'coin_to_vnd',
         'amount',
         'hash',
         'hash_status',
@@ -30,4 +33,14 @@ class Order extends Model
         'transaction_status',
         'status'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id')->select(array('id', 'username', 'status'));
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo('App\User', 'partner_id')->select(array('id', 'username', 'status'));
+    }
 }
