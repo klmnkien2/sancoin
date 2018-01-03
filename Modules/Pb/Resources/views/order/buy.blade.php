@@ -47,7 +47,14 @@
                 <label class="sr-only">BTC {{ trans('messages.label.you_receive') }}</label>
                 <div class="input-group">
                     <div class="input-group-addon">BTC {{ trans('messages.label.you_receive') }}</div>
-                    <input type="number" step="0.01" class="form-control" name="coin_amount_btc" min="0" placeholder="BTC">
+                    <input type="number" step="0.01" class="form-control pg-param-money" name="coin_amount_btc" min="0" placeholder="BTC">
+                </div>
+            </div>
+            <div class="form-group pg-for-btc display-none">
+                <label class="sr-only">{{ trans('messages.label.btc_to_usd') }}</label>
+                <div class="input-group">
+                    <div class="input-group-addon">{{ trans('messages.label.btc_to_usd') }}</div>
+                    <input type="number" step="0.01" class="form-control" name="btc_to_usd" min="0" value="{{$defaultCurrencies['BTC']}}" readonly="true">
                 </div>
             </div>
 
@@ -62,15 +69,29 @@
                 <label class="sr-only">ETH {{ trans('messages.label.you_receive') }}</label>
                 <div class="input-group">
                     <div class="input-group-addon">ETH {{ trans('messages.label.you_receive') }}</div>
-                    <input type="number" step="0.01" class="form-control" name="coin_amount_eth" min="0" placeholder="ETH">
+                    <input type="number" step="0.01" class="form-control pg-param-money" name="coin_amount_eth" min="0" placeholder="ETH">
+                </div>
+            </div>
+            <div class="form-group pg-for-eth display-none">
+                <label class="sr-only">{{ trans('messages.label.eth_to_usd') }}</label>
+                <div class="input-group">
+                    <div class="input-group-addon">{{ trans('messages.label.eth_to_usd') }}</div>
+                    <input type="number" step="0.01" class="form-control" name="eth_to_usd" min="0" value="{{$defaultCurrencies['ETH']}}" readonly="true">
                 </div>
             </div>
 
             <div class="form-group">
+                <label class="sr-only">{{ trans('messages.label.usd_to_vnd') }}</label>
+                <div class="input-group">
+                    <div class="input-group-addon">{{ trans('messages.label.usd_to_vnd') }}</div>
+                    <input type="number" required="required" step="0.01" class="form-control pg-param-money" name="usd_to_vnd" min="0" placeholder="VND" value="{{$defaultCurrencies['VND']}}">
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="sr-only">VND {{ trans('messages.label.you_spend') }}</label>
                 <div class="input-group">
                     <div class="input-group-addon">VND {{ trans('messages.label.you_spend') }}</div>
-                    <input type="number" class="form-control" name="amount" min="0" placeholder="VND">
+                    <input type="number" class="form-control" name="amount" min="0" placeholder="VND" readonly="true">
                 </div>
             </div>
 

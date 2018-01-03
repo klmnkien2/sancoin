@@ -15,8 +15,8 @@
                                     <form enctype="multipart/form-data" method="POST" type="post" action="">
                                         <div class="clearfix form-inner">
                                             <div class="alert-message">{!! ($messages?:'') !!}</div>
-                                            <div
-                                                class="clearix offer-form-top">
+                                            @if (!empty($order))
+                                            <div class="clearix offer-form-top">
                                                 <div class="form-group">
                                                     <div class="input-group">
                                                         <div class="input-group-addon">{{trans('messages.label.order_type')}}</div>
@@ -31,8 +31,8 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <div class="input-group-addon">{{trans('messages.label.vnd')}}/{{trans('messages.label.' . $order['coin_type'])}}</div>
-                                                        <div class="form-control"></div>
+                                                        <div class="input-group-addon">1 {{trans('messages.label.' . $order['coin_type'])}}</div>
+                                                        <div class="form-control">{{number_format($order['coin_to_vnd'] , 0 , '.' , ',' )}} VND</div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -62,6 +62,7 @@
                                                 {{csrf_field()}}
                                                 <button id="pg-profile-save" type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonConfirm')}}</span></button>
                                             </div>
+                                            @endif
                                         </div>
                                     </form>
                                 </div>

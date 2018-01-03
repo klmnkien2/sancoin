@@ -12,6 +12,7 @@
                                 <a class="btn btn-outline btn-sm" href="{{route('pb.order.all', ['type' => 'sell'])}}"><span class="btn-inner">View all</span></a>
                             </div>
                             <div class="clearfix box-body">
+                                @if (!empty($listSeller))
                                 <div class="custom-scrollbar">
                                     <ul class="clearfix offer-list">
                                         @foreach ($listSeller as $seller)
@@ -45,6 +46,9 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                                @else
+                                <div class="text-center">{{trans('messages.message.list_is_empty')}}</div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -57,6 +61,7 @@
                                 <a class="btn btn-outline btn-sm" href="{{route('pb.order.all', ['type' => 'buy'])}}"><span class="btn-inner">View all</span></a>
                             </div>
                             <div class="clearfix box-body">
+                                @if (!empty($listBuyer))
                                 <div class="custom-scrollbar">
                                     <ul class="clearfix offer-list">
                                         @foreach ($listBuyer as $buyer)
@@ -85,6 +90,9 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                                @else
+                                <div class="text-center">{{trans('messages.message.list_is_empty')}}</div>
+                                @endif
                             </div>
                         </div>
                     </div>

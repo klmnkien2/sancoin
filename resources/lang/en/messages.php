@@ -64,6 +64,9 @@ return [
         'coin_amount' => 'Amount of coin',
         'status' => 'Status',
         'total_vnd' => 'Total in VND',
+        'usd_to_vnd' => 'USD cost in VND',
+        'btc_to_usd' => 'BTC cost in USD',
+        'eth_to_usd' => 'ETH cost in USD',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',

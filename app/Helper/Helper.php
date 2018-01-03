@@ -289,10 +289,10 @@ if (!function_exists('get_string_between')) {
 if (!function_exists('get_currencies')) {
     function get_currencies($symbol)
     {
-//         $returnResults = Cache::get('currency-' . $symbol);
-//         if (!empty($returnResults)) {
-//             return $returnResults;
-//         }
+        $returnResults = Cache::get('currency-' . $symbol);
+        if (!empty($returnResults)) {
+            return $returnResults;
+        }
 
         $returnResults = [];
         $client = new Client();

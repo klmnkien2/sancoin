@@ -19,9 +19,9 @@
                 <td>{{$order['order_type']}}/{{$order['coin_type']}}</td>
                 <td class="number">
                     @if ($order['coin_type'] == 'btc')
-                        {{ number_format($order['coin_amount'], 8) }}
+                        {{ $order['coin_amount'] }}
                     @elseif ($order['coin_type'] == 'eth')
-                        {{ number_format($order['coin_amount'], 18) }}
+                        {{ $order['coin_amount'] }}
                     @endif
                 </td>
                 <td class="number">{{number_format($order['amount'] , 0 , '.' , ',' )}}</td>

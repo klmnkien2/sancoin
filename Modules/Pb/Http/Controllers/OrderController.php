@@ -45,6 +45,13 @@ class OrderController extends BaseController
             'condition' => $request->all()
         ];
 
+        //default value
+        $defaultCurrencies = ['VND' => 25000];
+        $btcCurrency = get_currencies('BTC');
+        $defaultCurrencies['BTC'] = $btcCurrency['lastest'];
+        $ethCurrency = get_currencies('ETH');
+        $defaultCurrencies['ETH'] = $ethCurrency['lastest'];
+
         //ETH
         $ethWallet = $this->walletService->getEthWallet(Auth::id());
         $ethAddress = '0x' . $ethWallet->address;
@@ -66,7 +73,7 @@ class OrderController extends BaseController
         $inOrderVND = Order::where(['status' => 'waiting', 'user_id' => Auth::id(), 'order_type' => 'buy'])->sum('amount');
         $availableVND = $vndWallet->amount - $inOrderVND;
         $messages = Common::getMessage($request);
-        return view('pb::order.index', compact('messages', 'tabActive', 'ethAddress', 'availableETH', 'btcAddress', 'availableBTC', 'availableVND', 'myOrders', 'pagination'));
+        return view('pb::order.index', compact('messages', 'tabActive', 'defaultCurrencies', 'ethAddress', 'availableETH', 'btcAddress', 'availableBTC', 'availableVND', 'myOrders', 'pagination'));
     }
 
     public function all(Request $request, $type)
@@ -174,9 +181,12 @@ class OrderController extends BaseController
                     }
                     if ($data['coin_type'] == 'btc') {
                         $data['coin_amount'] = $data['coin_amount_btc'];
+                        $data['coin_to_usd'] = $data['btc_to_usd'];
                     } else if ($data['coin_type'] == 'eth') {
                         $data['coin_amount'] = $data['coin_amount_eth'];
+                        $data['coin_to_usd'] = $data['eth_to_usd'];
                     }
+                    $data['coin_to_vnd'] = floatval($data['coin_to_usd']) * floatval($data['usd_to_vnd']);
                     $data['user_id'] = Auth::id();
                     $data['status'] = 'waiting';
                     // INSERT OR UPDATE RECORD

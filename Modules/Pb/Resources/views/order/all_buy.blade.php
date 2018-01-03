@@ -11,6 +11,7 @@
                                 <h3 class="box-title"><strong class="title-inner">List Of Buyers</strong></h3>
                             </div>
                             <div class="clearfix box-body">
+                                @if (!empty($listBuyer))
                                 <div class="custom-scrollbar">
                                     <ul class="clearfix offer-list">
                                         @foreach ($listBuyer as $buyer)
@@ -39,6 +40,9 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                                @else
+                                <div class="text-center">{{trans('messages.message.list_is_empty')}}</div>
+                                @endif
                             </div>
                         </div>
                     </div>
