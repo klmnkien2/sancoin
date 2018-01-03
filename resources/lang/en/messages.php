@@ -47,6 +47,10 @@ return [
         'status_waiting' => 'Waiting',
         'status_pending' => 'Pending',
         'status_done' => 'Done',
+        'previous_page' => 'Previous page',
+        'next_page' => 'Next page',
+        'total_result' => 'Total :total_record records.',
+        'pagination_display' => 'Showing from :from to :to.',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -65,5 +69,6 @@ return [
         'order_successfully' => 'Your order has been created successfully.',
         'cancel_order_successfully' => 'Cancelled order successfully.',
         'cancel_order_fail' => 'Cancelled order fail.',
+        'list_is_empty' => 'No record.',
     ],
 ];

@@ -17,3 +17,17 @@
 .del-link {
 	color: red;
 }
+
+.table-pagination {
+    margin: 20px;
+}
+
+.table-pagination .pagination-summary {
+    font-style: italic;
+    font-size: 90%;
+    font-weight: bold;
+}
+
+.table-pagination ul.pagination {
+    margin-top: 10px!important;
+}

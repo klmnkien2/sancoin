@@ -12,6 +12,7 @@
         </tr>
         </thead>
         <tbody>
+        @if (!empty($myOrders))
             @foreach ($myOrders as $order)
             <tr>
                 <td>{{ $order['created_at'] }}</td>
@@ -47,6 +48,16 @@
                 </td>
             </tr>
             @endforeach
+        @else
+            <tr><td colspan="7" align="center">{{trans('messages.message.list_is_empty')}}</td></tr>
+        @endif
         </tbody>
     </table>
+
+    @include('pb::mod.pagination', [
+        'total' => $pagination['total'],
+        'page' => $pagination['page'],
+        'per' => $pagination['per'],
+        'condition' => $pagination['condition']
+    ])
 </div>

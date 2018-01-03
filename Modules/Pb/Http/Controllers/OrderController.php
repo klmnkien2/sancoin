@@ -36,7 +36,14 @@ class OrderController extends BaseController
         $tabActive = $request->get('tab', 'buy');//default
 
         //my orders
-        $myOrders = Order::where(['user_id' => Auth::id()])->orderBy('created_at', 'desc')->paginate(2);
+        $myOrders = Order::where(['user_id' => Auth::id()])->orderBy('created_at', 'desc')->paginate(10);
+        $total = Order::where(['user_id' => Auth::id()])->count();
+        $pagination = [
+            'total' => $total,
+            'page' => $request->get('page', 1),
+            'per' => 10,
+            'condition' => $request->all()
+        ];
 
         //ETH
         $ethWallet = $this->walletService->getEthWallet(Auth::id());
@@ -59,7 +66,7 @@ class OrderController extends BaseController
         $inOrderVND = Order::where(['status' => 'waiting', 'user_id' => Auth::id(), 'order_type' => 'buy'])->sum('amount');
         $availableVND = $vndWallet->amount - $inOrderVND;
         $messages = Common::getMessage($request);
-        return view('pb::order.index', compact('messages', 'tabActive', 'ethAddress', 'availableETH', 'btcAddress', 'availableBTC', 'availableVND', 'myOrders'));
+        return view('pb::order.index', compact('messages', 'tabActive', 'ethAddress', 'availableETH', 'btcAddress', 'availableBTC', 'availableVND', 'myOrders', 'pagination'));
     }
 
     public function all(Request $request, $type)
@@ -72,7 +79,7 @@ class OrderController extends BaseController
     {
         try {
             DB::beginTransaction();
-            Order::delete($id);
+            Order::find($id)->delete();
             DB::commit();
         } catch (\Exception $e) {
             LogService::write($request, $e);

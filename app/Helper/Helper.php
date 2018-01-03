@@ -2,6 +2,7 @@
 use \Illuminate\Support\Facades\Request;
 use GuzzleHttp\Client;
 use Models\Currency;
+use Illuminate\Support\Facades\Cache;
 
 if (!function_exists('getBrowserLocale')) {
     function getBrowserLocale()
@@ -286,32 +287,50 @@ if (!function_exists('get_string_between')) {
 }
 
 if (!function_exists('get_currencies')) {
-    function get_currencies()
+    function get_currencies($symbol)
     {
-        //BTC
+        $returnResults = Cache::get('currency-' . $symbol);
+        if (!empty($returnResults)) {
+            return $returnResults;
+        }
+
         $returnResults = [];
         $client = new Client();
-        $response = $client->get("https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD");
+        $response = $client->get("https://min-api.cryptocompare.com/data/price?fsym=$symbol&tsyms=USD");
         $json = $response->getBody();
         $aResult = json_decode($json, TRUE);
-        $returnResults['BTC'] = ['lastest' => $aResult['USD']];
-        $btcPriceInDB = Currency::where('symbol', 'BTC')->orderBy('created_at')->first();
-        if (empty($btcPriceInDB) || $btcPriceInDB['to_usd'] != $aResult['USD']) {
-            Currency::create(['name' => 'BTC', 'symbol' => 'BTC', 'to_usd' => $aResult['USD']]);
+        $returnResults['lastest'] = $aResult['USD'];
+        $listInDB = Currency::where('symbol', $symbol)->orderBy('created_at')->take(2)->get();
+        $first = null;
+        $second = null;
+        foreach($listInDB as $currency) {
+            if (empty($first)) {
+                $first = $currency['to_usd'];
+            } else if (empty($second)) {
+                $second = $currency['to_usd'];
+            }
         }
 
-        //ETH
-        $response = $client->get("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD");
-        $json = $response->getBody();
-        $aResult = json_decode($json, TRUE);
-        $ethPrice = $aResult['USD'];
-        $returnResults['ETH'] = ['lastest' => $aResult['USD']];
-        $ethPriceInDB = Currency::where('symbol', 'ETH')->orderBy('created_at')->first();
-        if (empty($ethPriceInDB) || $ethPriceInDB['to_usd'] != $aResult['USD']) {
-            Currency::create(['name' => 'ETH', 'symbol' => 'ETH', 'to_usd' => $aResult['USD']]);
+        if (empty($first) || $first != $aResult['USD']) {
+            Currency::create(['name' => $symbol, 'symbol' => $symbol, 'to_usd' => $aResult['USD']]);
+            $first = $aResult['USD'];
+            if (!empty($first)) {
+                $second = $first;
+            }
         }
 
-        //dd($returnResults);
+        $returnResults['change_percentage'] = 0;
+        if (!empty($second)) {
+            $returnResults['change_percentage'] = ($first - $second) * 100 / $second;
+        }
+
+        $returnResults['high'] = Currency::where('symbol', $symbol)->max('to_usd');
+        $returnResults['low'] = Currency::where('symbol', $symbol)->min('to_usd');
+        $returnResults['avg'] = Currency::where('symbol', $symbol)->avg('to_usd');
+
+        $expiresAt = now()->addMinutes(120);
+        Cache::put('currency-' . $symbol, $returnResults, $expiresAt);
+
         return $returnResults;
     }
 }
