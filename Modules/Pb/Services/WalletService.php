@@ -8,6 +8,7 @@ use Models\EthWallet;
 use Models\BtcWallet;
 use Models\VndWallet;
 use Models\Profile;
+use Models\Order;
 
 class WalletService
 {
@@ -91,6 +92,20 @@ class WalletService
         }
 
         return $wallet;
+    }
+
+    public function getInOrderVND($userId)
+    {
+        $inOrderVNDAsBuyer = Order::where(['status' => 'waiting', 'user_id' => $userId, 'order_type' => 'buy'])->sum('amount');
+        $inOrderVNDAsSeller = Order::where(['status' => 'pending', 'partner_id' => $userId, 'order_type' => 'sell'])->sum('amount');
+        return $inOrderVNDAsBuyer + $inOrderVNDAsSeller;
+    }
+
+    public function getInOrderCoin($userId, $coin_type)
+    {
+        $inOrderAsBuyer = Order::where(['status' => 'pending', 'partner_id' => $userId, 'order_type' => 'buy', 'coin_type' => $coin_type])->sum('coin_amount');
+        $inOrderAsSeller = Order::where(['status' => 'waiting', 'user_id' => $userId, 'order_type' => 'sell', 'coin_type' => $coin_type])->sum('coin_amount');
+        return $inOrderAsBuyer + $inOrderAsSeller;
     }
 }
 

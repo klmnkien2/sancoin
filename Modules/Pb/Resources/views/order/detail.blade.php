@@ -31,6 +31,12 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="input-group">
+                                                        <div class="input-group-addon">{{trans('messages.label.creator')}}</div>
+                                                        <div class="form-control"><a class="nickname" href="{{ route('pb.get_user', ['username' => $order->user['username']]) }}">{{ $order->user['username'] }}</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group">
                                                         <div class="input-group-addon">1 {{trans('messages.label.' . $order['coin_type'])}}</div>
                                                         <div class="form-control">{{number_format($order['coin_to_vnd'] , 0 , '.' , ',' )}} VND</div>
                                                     </div>

@@ -75,6 +75,8 @@ return [
         'doneBuyBTC' => 'Purchased BTC',
         'doneSellETH' => 'Sold ETH',
         'doneBuyETH' => 'Purchased ETH',
+        'creator' => 'Creator',
+        'user_summary' => 'User\'s summary',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -93,8 +95,11 @@ return [
         'order_successfully' => 'Your order has been created successfully.',
         'cancel_order_successfully' => 'Cancelled order successfully.',
         'cancel_order_fail' => 'Cancelled order fail.',
+        'order_fail' => 'Order was failed.',
+        'order_done' => 'Order was done. It\'s take time to finish the transaction.',
         'list_is_empty' => 'No record.',
         'no_order_found' => 'There\'s no order satify your query.',
         'confirm_order_notice' => 'Once you click the bellow button, your transaction will be perform immidiately.',
+        'error_order_belong_you' => "You can't transfer with your own order.",
     ],
 ];

@@ -24,8 +24,8 @@
                                                     </a>
                                                 </div>
                                                 <div class="clearfix user-info">
-                                                    <div class="user-photo"><a href="#"><img src="{{url('assets/pb/images/icon-user-sample.png')}}" alt=""></a></div>
-                                                    <div class="username"><a class="nickname" href="#">{{ $buyer->user['username'] }}</a></div>
+                                                    <div class="user-photo"><a href="{{ route('pb.get_user', ['username' => $buyer->user['username']]) }}"><img src="{{url('assets/pb/images/icon-user-sample.png')}}" alt=""></a></div>
+                                                    <div class="username"><a class="nickname" href="{{ route('pb.get_user', ['username' => $buyer->user['username']]) }}">{{ $buyer->user['username'] }}</a></div>
                                                     <div class="badge-group">
                                                         @if ($buyer->user['status'] == 2)
                                                             <span class="badge badge-success"><em class="fa fa-unlock-alt"></em> {{trans('messages.label.verified')}}</span>
