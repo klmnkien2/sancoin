@@ -31,3 +31,29 @@
 .table-pagination ul.pagination {
     margin-top: 10px!important;
 }
+
+.box {
+	border-radius: 4px;
+}
+
+.box.box-green {
+    background-color: #00a65a;
+}
+
+.box.box-red {
+    background-color: #dd4b39;
+}
+
+.box p.value {
+	text-align: center;
+    font-size: 50px;
+    color: #fff;
+}
+
+.box p.desc {
+    text-align: center;
+    font-style: italic;
+    color: #fff;
+    padding: 15px;
+    margin: 0;
+}

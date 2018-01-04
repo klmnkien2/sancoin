@@ -4,6 +4,7 @@ if (check_domain(env('DOMAIN_PB'))) {
     {
         Route::get('/', 'PbController@index')->name('pb.index');
         Route::get('/home', 'PbController@index')->name('pb.home');
+        Route::get('/user/{username}', 'PbController@getUser')->name('pb.get_user');
         Route::group(['middleware' => 'guest:web'], function ()
         {
             // Login
