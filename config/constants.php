@@ -16,6 +16,8 @@ if (!defined('DESC')) define('DESC', 'desc');
 if (!defined('INACTIVE')) define('INACTIVE', 0);
 if (!defined('ACTIVE')) define('ACTIVE', 1);
 
+if (!defined('SERVICE_FEE_PERCENT')) define('SERVICE_FEE_PERCENT', 0.5);
+
 //Log type
 if (!defined('LOG_TYPE_DEBUG')) define('LOG_TYPE_DEBUG', 100);
 if (!defined('LOG_TYPE_INFO')) define('LOG_TYPE_INFO', 200);

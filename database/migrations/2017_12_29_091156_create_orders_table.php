@@ -26,6 +26,7 @@ class CreateOrdersTable extends Migration
             $table->string('hash', 100)->nullable();
             $table->char('hash_status', 10)->nullable();
             $table->string('amount', 100);
+            $table->string('fee', 100);
             $table->integer('transaction_id', false, true)->nullable();
             $table->char('transaction_status', 10)->nullable();
             $table->char('status', 10);

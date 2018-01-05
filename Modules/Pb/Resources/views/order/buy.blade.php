@@ -98,6 +98,7 @@
             <div class="button-group">
                 {{csrf_field()}}
                 <input type="hidden" name="order_type" value="buy">
+                <input type="hidden" name="fee" value="{{ floatval(SERVICE_FEE_PERCENT)/100 }}">
                 <button type="submit" class="btn btn-flat-green"><span class="btn-inner">Buy Order</span></button>
 <!--                 <button type="reset" class="btn"><span class="btn-inner">Reset</span></button> -->
             </div>

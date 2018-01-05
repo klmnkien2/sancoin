@@ -26,6 +26,8 @@ class Transaction extends Model
         'to_id',
         'to_account',
         'amount',
+        'to_amount',
+        'from_amount',
         'status'
     ];
 }

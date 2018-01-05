@@ -27,6 +27,7 @@ class Order extends Model
         'usd_to_vnd',
         'coin_to_vnd',
         'amount',
+        'fee',
         'hash',
         'hash_status',
         'transaction_id',

@@ -20,6 +20,8 @@ class CreateTransactionsTable extends Migration
             $table->string('from_account', 255)->nullable();
             $table->integer('to_id', false, true);
             $table->string('to_account', 255)->nullable();
+            $table->string('from_amount', 100);
+            $table->string('to_amount', 100);
             $table->string('amount', 100);
             $table->char('type', 10)->default('order');
             $table->char('status', 10);

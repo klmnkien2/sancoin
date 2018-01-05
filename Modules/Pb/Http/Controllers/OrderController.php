@@ -175,7 +175,11 @@ class OrderController extends BaseController
                         'status' => 'pending',
                         'amount' => $order->amount,
                     ];
-                    if ($order['order_type'] == 'buy') {
+
+                    $transaction['to_amount'] = floatval($order->amount) * (1 - floatval($order->fee));
+                    $transaction['from_amount'] = floatval($order->amount) * (1 + floatval($order->fee));
+
+                    if ($order['order_type'] == 'buy') {// mean you will sell coin, and receive vnd
                         $transaction['from_id'] = $order->user_id;
                         $vndWallet = $this->walletService->getVndWallet($order->user_id);
                         $transaction['from_account'] = $vndWallet->account_number;
@@ -184,7 +188,7 @@ class OrderController extends BaseController
                         $vndWallet = $this->walletService->getVndWallet(Auth::id());
                         $transaction['to_account'] = $vndWallet->account_number;
                     }
-                    if ($order['order_type'] == 'sell') {
+                    if ($order['order_type'] == 'sell') {//mean you will buy coin
                         $transaction['from_id'] = Auth::id();
                         $vndWallet = $this->walletService->getVndWallet(Auth::id());
                         $transaction['from_account'] = $vndWallet->account_number;

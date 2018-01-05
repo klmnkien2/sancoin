@@ -159,13 +159,6 @@ class WalletController extends BaseController
             $fullAddress = $this->bitcoinService->getAllInfo($walletAddress);
             $avaiableAmount = $fullAddress['balance'];
             $transactionHistory = $fullAddress['txs'];
-
-            //get transaction
-//             $res = $this->etherscanService->getTransactions($walletAddress, 1);
-//             if (!empty($res['result'])) {
-//                 $transactionHistory = $res['result'];
-//             }
-            //dd($transactionHistory);
         }
 
         return view('pb::wallet.btc', compact('messages', 'walletAddress', 'avaiableAmount', 'transactionHistory'));
