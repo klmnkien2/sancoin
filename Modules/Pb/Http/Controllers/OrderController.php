@@ -56,7 +56,7 @@ class OrderController extends BaseController
         //ETH
         $ethWallet = $this->walletService->getEthWallet(Auth::id());
         $ethAddress = '0x' . $ethWallet->address;
-        $ethInRequest = Order::where(['status' => 'waiting', 'user_id' => Auth::id(), 'coin_type' => 'eth', 'order_type' => 'sell'])->sum('coin_amount');
+        $ethInRequest = $this->walletService->getInOrderCoin(Auth::id(), 'eth');
         $availableETH = 0;
         $res = $this->etherscanService->getBalance($ethAddress);
         if (!empty($res['result'])) {
@@ -66,7 +66,7 @@ class OrderController extends BaseController
         //BTC
         $btcWallet = $this->walletService->getBtcWallet(Auth::id());
         $btcAddress = $btcWallet->address;
-        $btcInRequest = Order::where(['status' => 'waiting', 'user_id' => Auth::id(), 'coin_type' => 'btc', 'order_type' => 'sell'])->sum('coin_amount');
+        $btcInRequest = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
         $availableBTC = $this->bitcoinService->getBalance($btcAddress);
         $availableBTC = $availableBTC - floatval($btcInRequest) * 100000000;
         //VND

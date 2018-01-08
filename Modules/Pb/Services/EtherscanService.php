@@ -108,13 +108,23 @@ class EtherscanService
             'module' => 'account',
             'action' => 'txlist',
             'address' => $addr,
-            'sort' => 'asc',
+            'sort' => 'desc',
             'startblock' => 0,
             'endblock' => 99999999,
             'page' => $page,
             'offset' => $offset
         ];
 
+        return $this->request($params);
+    }
+
+    public function send($rawTx)
+    {
+        $params = [
+            'module' => 'proxy',
+            'action' => 'eth_sendRawTransaction',
+            'hex' => $rawTx
+        ];
         return $this->request($params);
     }
 

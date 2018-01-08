@@ -23,4 +23,21 @@ class OrderValidator
 
         return $res;
     }
+
+    public function validateWithdraw() {
+        $res['rules'] = [
+            'amount' => 'numeric|required|min:0',
+            'coin_type' => 'required|min:1',
+            'to_address' => 'required|min:1'
+        ];
+
+        $res['messages'] = [];
+        $res['attributes'] = [
+            'amount' => trans('messages.label.amount'),
+            'coin_type' => trans('messages.label.transfer_coin_type'),
+            'to_address' => trans('messages.label.address'),
+        ];
+
+        return $res;
+    }
 }

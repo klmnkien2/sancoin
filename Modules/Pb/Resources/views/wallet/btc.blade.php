@@ -12,8 +12,9 @@
 							</div>
 							<div class="clearfix box-body" style="padding: 15px;">
 								<div class="offer-form">
-									<form method="POST" type="post" action="{{route('pb.updateProfile')}}">
+									<form method="POST" type="post" action="{{route('pb.wallet.withdraw')}}">
 										<div class="clearfix form-inner">
+											<div>{!! ($messages?:'') !!}</div>
 											<div class="clearix offer-form-top">
 												<div class="form-group">
 													<div class="input-group">
@@ -21,6 +22,12 @@
 														<div class="form-control">{{ number_format($avaiableAmount/100000000, 8) }}</div>
 													</div>
 												</div>
+												<div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{trans('messages.label.in_order_money')}}</div>
+                                                        <div class="form-control">{{ $inOrderCoin }}</div>
+                                                    </div>
+                                                </div>
 												<div class="form-group">
 													<div class="input-group">
 														<div class="input-group-addon">{{trans('messages.label.your_btc_addr')}}</div>
@@ -35,7 +42,7 @@
 												<label class="sr-only">{{trans('messages.label.amount')}}</label>
 												<div class="input-group">
 													<div class="input-group-addon">{{trans('messages.label.amount')}}</div>
-													<input type="text" class="form-control" placeholder="BTC">
+													<input type="text" name="amount" class="form-control" placeholder="BTC">
 												</div>
 											</div>
 
@@ -43,18 +50,20 @@
 												<label class="sr-only">{{trans('messages.label.to')}}</label>
 												<div class="input-group">
 													<div class="input-group-addon">{{trans('messages.label.to')}}</div>
-													<input type="text" class="form-control" placeholder="Address">
+													<input type="text" name="to_address" class="form-control" placeholder="Address">
 												</div>
 											</div>
 
-											<div class="form-group">
+											<!--<div class="form-group">
 												<div>
     												<input id="pg-withdraw-all" type="checkbox" class="form-control" style="width: auto; float: left; line-height: 40px;">
     												<label style="margin-left:10px; line-height: 40px;">{{trans('messages.label.withdraw_all')}}</label>
 												</div>
-											</div>
+											</div>-->
 
 											<div class="button-group">
+												{{ csrf_field() }}
+                                                <input type="hidden" name="coin_type" value="btc">
 												<button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonWithdraw')}}</span></button>
 											</div>
 										</div>
@@ -93,10 +102,10 @@
     												@else
     													<td class="change"><span class="fa fa-arrow-circle-o-down"></span></td>
     												@endif
-    												<td><span class="address-tag" title="{{$transaction['hash']}}">{{$transaction['hash']}}</span></td>
+    												<td><a href="#{{$transaction['hash']}}" class="address-tag" title="{{$transaction['hash']}}">{{$transaction['hash']}}</a></td>
     												<td>{{ $transaction['received']->diffForHumans() }}</td>
-    												<td><span class="address-tag" title="{{$transaction['from']}}">{{$transaction['from']}}</span></td>
-    												<td><span class="address-tag" title="{{$transaction['to']}}">{{$transaction['to']}}</span></td>
+    												<td><a href="#{{$transaction['from']}}" class="address-tag" title="{{$transaction['from']}}">{{$transaction['from']}}</a></td>
+    												<td><a href="#{{$transaction['to']}}" class="address-tag" title="{{$transaction['to']}}">{{$transaction['to']}}</a></td>
     												<td class="number">{{ number_format(floatval($transaction['value'])/100000000, 8) }}</td>
     											</tr>
     											@endforeach

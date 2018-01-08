@@ -77,6 +77,7 @@ return [
         'doneBuyETH' => 'Purchased ETH',
         'creator' => 'Creator',
         'user_summary' => 'User\'s summary',
+        'in_order_money' => 'In order',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -101,5 +102,7 @@ return [
         'no_order_found' => 'There\'s no order satify your query.',
         'confirm_order_notice' => 'Once you click the bellow button, your transaction will be perform immidiately.',
         'error_order_belong_you' => "You can't transfer with your own order.",
+		'transfer_money_success' => 'Transfer :money successfully.',
+		'transfer_money_fail' => 'Transfer :money fail.'
     ],
 ];
