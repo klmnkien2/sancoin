@@ -130,6 +130,32 @@ class OrderController extends BaseController
                             ];
                             break;
                         }
+
+                        if ($order['coin_type'] == 'btc') {
+                            $btcWallet = $this->walletService->getBtcWallet(Auth::id());
+                            $btcAddress = $btcWallet->address;
+                            $txhash = $this->walletService->sendBTC($order['user_id'], $btcAddress, $order['coin_amount']);
+                            if (empty($txhash)) {
+                                $error = [
+                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'BTC'])]
+                                ];
+                                break;
+                            }
+                            $order->hash = $txhash;
+                        }
+
+                        if ($order['coin_type'] == 'eth') {
+                            $ethWallet = $this->walletService->getEthWallet(Auth::id());
+                            $ethAddress = '0x' . $ethWallet->address;
+                            $txhash = $this->walletService->sendETH($order['user_id'], $ethWallet, $order['coin_amount']);
+                            if (empty($txhash)) {
+                                $error = [
+                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'ETH'])]
+                                ];
+                                break;
+                            }
+                            $order->hash = $txhash;
+                        }
                     }
 
                     //Accept a sell mean you buy coin by vnd
@@ -147,6 +173,17 @@ class OrderController extends BaseController
                                 ];
                                 break;
                             }
+                            // transfer coin and get hash
+                            $receiveBtcWallet = $this->walletService->getBtcWallet($order['user_id']);
+                            $receiveBtcAddress = $receiveBtcWallet->address;
+                            $txhash = $this->walletService->sendBTC(Auth::id(), $receiveBtcAddress, $order['coin_amount']);
+                            if (empty($txhash)) {
+                                $error = [
+                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'BTC'])]
+                                ];
+                                break;
+                            }
+                            $order->hash = $txhash;
                         }
 
                         if ($order['coin_type'] == 'eth') {
@@ -166,6 +203,18 @@ class OrderController extends BaseController
                                 ];
                                 break;
                             }
+
+                            // transfer coin and get hash
+                            $receiveEthWallet = $this->walletService->getEthWallet($order['user_id']);
+                            $receiveEthAddress = '0x' . $receiveEthWallet->address;
+                            $txhash = $this->walletService->sendETH(Auth::id(), $receiveEthAddress, $order['coin_amount']);
+                            if (empty($txhash)) {
+                                $error = [
+                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'ETH'])]
+                                ];
+                                break;
+                            }
+                            $order->hash = $txhash;
                         }
                     }
 
