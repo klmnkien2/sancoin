@@ -12,8 +12,9 @@
                             </div>
                             <div class="clearfix box-body" style="padding: 15px;">
                                 <div class="offer-form">
-                                    <form method="POST" type="post" action="{{route('pb.updateProfile')}}">
+                                    
                                         <div class="clearfix form-inner">
+											<div>{!! ($messages?:'') !!}</div>
                                             <div class="clearix offer-form-top">
                                                 <div class="form-group">
                                                     <div class="input-group">
@@ -22,54 +23,60 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+											<form method="POST" type="post" action="{{route('pb.wallet.updateVND')}}">
+											{{ csrf_field() }}
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <div class="input-group-addon">{{trans('messages.label.fullname')}}</div>
-                                                    <input type="text" class="form-control" placeholder="...">
+                                                    <input type="text" name="account_name" class="form-control" placeholder="..." value="{{ empty($wallet['account_name'])?'':$wallet['account_name'] }}">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <div class="input-group-addon">{{trans('messages.label.account_number')}}</div>
-                                                    <input type="text" class="form-control" placeholder="...">
+                                                    <input type="text" name="account_number" class="form-control" placeholder="..." value="{{ empty($wallet['account_number'])?'':$wallet['account_number'] }}">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <div class="input-group-addon">{{trans('messages.label.bank_branch')}}</div>
-                                                    <input type="text" class="form-control" placeholder="...">
+                                                    <input type="text" name="bank_branch" class="form-control" placeholder="..." value="{{ empty($wallet['bank_branch'])?'':$wallet['bank_branch'] }}">
                                                 </div>
                                             </div>
 
                                             <div class="button-group">
-                                                <button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonUpdate')}}</span></button>
+                                                <button type="submit" name="updateinfo" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonUpdate')}}</span></button>
                                             </div>
-
+											</form>
                                             <div class="service-fee-text">{{trans('messages.message.vnd_wallet_update_notice')}}</div>
 
                                             <div class="hr-text"><span>{{trans('messages.label.withdraw')}}</span><hr></div>
 
+											<form method="POST" type="post" action="{{route('pb.wallet.withdraw')}}">
+											{{ csrf_field() }}
                                             <div class="form-group">
                                                 <label class="sr-only">{{trans('messages.label.amount')}}</label>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">{{trans('messages.label.amount')}}</div>
-                                                    <input type="text" class="form-control" placeholder="VND">
+                                                    <input type="text" name="amount" class="form-control" placeholder="VND">
                                                 </div>
                                             </div>
 
-                                            <div class="form-group">
+                                            <!--<div class="form-group">
                                                 <div>
                                                     <input id="pg-withdraw-all" type="checkbox" class="form-control" style="width: auto; float: left; line-height: 40px;">
                                                     <label style="margin-left:10px; line-height: 40px;">{{trans('messages.label.withdraw_all')}}</label>
                                                 </div>
-                                            </div>
+                                            </div>-->
 
                                             <div class="button-group">
+												<input type="hidden" name="coin_type" value="vnd">
+												<input type="hidden" name="to_address" value="withdrawvnd">
                                                 <button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonWithdraw')}}</span></button>
                                             </div>
+											</form>
                                         </div>
-                                    </form>
+                                    
                                 </div>
                             </div>
                         </div>

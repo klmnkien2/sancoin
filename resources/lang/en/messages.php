@@ -103,6 +103,9 @@ return [
         'confirm_order_notice' => 'Once you click the bellow button, your transaction will be perform immidiately.',
         'error_order_belong_you' => "You can't transfer with your own order.",
 		'transfer_money_success' => 'Transfer :money successfully.',
-		'transfer_money_fail' => 'Transfer :money fail.'
+		'transfer_money_fail' => 'Transfer :money fail.',
+		'update_vnd_wallet_success' => 'Transfer wallet\'s Information successfully.',
+		'update_vnd_wallet_fail' => 'Transfer wallet\'s Information fail.',
+		'not_map_profile_fullname' => 'Account name isn\'t map your profile fullname. Please recheck!',
     ],
 ];

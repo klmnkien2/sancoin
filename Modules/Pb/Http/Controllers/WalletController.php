@@ -116,6 +116,58 @@ class WalletController extends BaseController
 
         return redirect(route('pb.getProfile'));
     }
+	
+	public function updateVND(Request $request)
+    {
+		$error = null;
+        try {
+            $orderValidator = new OrderValidator();
+            $data = $request->all();
+            $data['user_id'] = Auth::id();
+            
+			do {
+				$validator = $this->checkValidator($data, $orderValidator->validateUpdateWalletVnd());
+				if ($validator->fails()) {
+					$error = $validator->getMessageBag()->getMessages();
+					break;
+				}
+				// INSERT OR UPDATE RECORD
+				DB::beginTransaction();
+				$profile = Profile::where('user_id', Auth::id())->first();
+				if(empty($profile) || $profile['fullname'] != $data['account_name']) {
+					$error = [
+						'common' => [trans('messages.message.not_map_profile_fullname')]
+					];
+					break;
+				}
+				$wallet = $this->walletService->getVndWallet(Auth::id());
+				$wallet->account_name = $data['account_name'];
+				$wallet->account_number = $data['account_number'];
+				$wallet->bank_branch = $data['bank_branch'];
+				$wallet->save();
+				
+				DB::commit();
+				$success = true;
+				break;
+			} while (false);
+
+        } catch (\Exception $e) {
+            LogService::write($request, $e);
+            DB::rollback();
+            //dd($e);
+            $error = [
+                'common' => [trans('messages.message.update_vnd_wallet_fail')]
+            ];
+        }
+
+        if (!empty($error)) {
+            Common::setMessage($request, 'error', $error);
+        } else {
+            Common::setMessage($request, 'success', ['common' => [trans('messages.message.update_vnd_wallet_success')]]);
+        }
+
+        return redirect(route('pb.wallet.vnd'));
+    }
 
     public function eth(Request $request)
     {

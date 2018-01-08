@@ -23,6 +23,7 @@ if (check_domain(env('DOMAIN_PB'))) {
                 Route::get('/eth', 'WalletController@eth')->name('pb.wallet.eth');
                 Route::get('/btc', 'WalletController@btc')->name('pb.wallet.btc');
                 Route::get('/vnd', 'WalletController@vnd')->name('pb.wallet.vnd');
+				Route::post('/vnd', 'WalletController@updateVND')->name('pb.wallet.updateVND');
                 Route::post('/withdraw', 'WalletController@withdraw')->name('pb.wallet.withdraw');
             });
             Route::group(['prefix' => 'order'], function () {

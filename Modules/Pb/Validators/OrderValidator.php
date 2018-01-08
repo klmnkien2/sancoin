@@ -40,4 +40,21 @@ class OrderValidator
 
         return $res;
     }
+	
+	public function validateUpdateWalletVnd() {
+        $res['rules'] = [
+            'account_name' => 'required|max:255',
+            'account_number' => 'required|max:255',
+            'bank_branch' => 'required|max:255',
+        ];
+
+        $res['messages'] = [];
+        $res['attributes'] = [
+            'account_name' => trans('messages.label.fullname'),
+            'account_number' => trans('messages.label.account_number'),
+            'bank_branch' => trans('messages.label.bank_branch'),
+        ];
+
+        return $res;
+    }
 }
