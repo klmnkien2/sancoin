@@ -170,31 +170,32 @@ class PbController extends BaseController
 
     public function getUser($username)
     {
-        $createSell = Order::where(['user_id' => Auth::id(), 'order_type' => 'sell'])->count();
-        $createBuy = Order::where(['user_id' => Auth::id(), 'order_type' => 'buy'])->count();
+        $user = User::where('username', $username)->first();
+        $createSell = Order::where(['user_id' =>     $user->id, 'order_type' => 'sell'])->count();
+        $createBuy = Order::where(['user_id' =>     $user->id, 'order_type' => 'buy'])->count();
 
-        $doneSellVNDAsSeller = Order::where(['user_id' => Auth::id(), 'order_type' => 'sell', 'status' => 'done'])->sum('amount');
-        $doneSellVNDAsBuyer = Order::where(['partner_id' => Auth::id(), 'order_type' => 'buy', 'status' => 'done'])->sum('amount');
+        $doneSellVNDAsSeller = Order::where(['user_id' =>     $user->id, 'order_type' => 'sell', 'status' => 'done'])->sum('amount');
+        $doneSellVNDAsBuyer = Order::where(['partner_id' =>     $user->id, 'order_type' => 'buy', 'status' => 'done'])->sum('amount');
         $doneSellVND = $doneSellVNDAsSeller + $doneSellVNDAsBuyer;
 
-        $doneBuyVNDAsSeller = Order::where(['user_id' => Auth::id(), 'order_type' => 'buy', 'status' => 'done'])->sum('amount');
-        $doneBuyVNDAsBuyer = Order::where(['partner_id' => Auth::id(), 'order_type' => 'sell', 'status' => 'done'])->sum('amount');
+        $doneBuyVNDAsSeller = Order::where(['user_id' =>     $user->id, 'order_type' => 'buy', 'status' => 'done'])->sum('amount');
+        $doneBuyVNDAsBuyer = Order::where(['partner_id' =>     $user->id, 'order_type' => 'sell', 'status' => 'done'])->sum('amount');
         $doneBuyVND = $doneBuyVNDAsSeller + $doneBuyVNDAsBuyer;
 
-        $doneSellBTCAsSeller = Order::where(['user_id' => Auth::id(), 'order_type' => 'sell', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
-        $doneSellBTCAsBuyer = Order::where(['partner_id' => Auth::id(), 'order_type' => 'buy', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
+        $doneSellBTCAsSeller = Order::where(['user_id' =>     $user->id, 'order_type' => 'sell', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
+        $doneSellBTCAsBuyer = Order::where(['partner_id' =>     $user->id, 'order_type' => 'buy', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
         $doneSellBTC = $doneSellBTCAsSeller + $doneSellBTCAsBuyer;
 
-        $doneBuyBTCAsSeller = Order::where(['user_id' => Auth::id(), 'order_type' => 'buy', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
-        $doneBuyBTCAsBuyer = Order::where(['partner_id' => Auth::id(), 'order_type' => 'sell', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
+        $doneBuyBTCAsSeller = Order::where(['user_id' =>     $user->id, 'order_type' => 'buy', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
+        $doneBuyBTCAsBuyer = Order::where(['partner_id' =>     $user->id, 'order_type' => 'sell', 'coin_type' => 'btc', 'status' => 'done'])->sum('coin_amount');
         $doneBuyBTC = $doneBuyBTCAsSeller + $doneBuyBTCAsBuyer;
 
-        $doneSellETHAsSeller = Order::where(['user_id' => Auth::id(), 'order_type' => 'sell', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
-        $doneSellETHAsBuyer = Order::where(['partner_id' => Auth::id(), 'order_type' => 'buy', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
+        $doneSellETHAsSeller = Order::where(['user_id' =>     $user->id, 'order_type' => 'sell', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
+        $doneSellETHAsBuyer = Order::where(['partner_id' =>     $user->id, 'order_type' => 'buy', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
         $doneSellETH = $doneSellETHAsSeller + $doneSellETHAsBuyer;
 
-        $doneBuyETHAsSeller = Order::where(['user_id' => Auth::id(), 'order_type' => 'buy', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
-        $doneBuyETHAsBuyer = Order::where(['partner_id' => Auth::id(), 'order_type' => 'sell', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
+        $doneBuyETHAsSeller = Order::where(['user_id' =>     $user->id, 'order_type' => 'buy', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
+        $doneBuyETHAsBuyer = Order::where(['partner_id' =>     $user->id, 'order_type' => 'sell', 'coin_type' => 'eth', 'status' => 'done'])->sum('coin_amount');
         $doneBuyETH = $doneBuyETHAsSeller + $doneBuyETHAsBuyer;
         return view('pb::get_user', compact('createSell', 'createBuy', 'doneBuyVND', 'doneSellVND', 'doneSellBTC', 'doneBuyBTC', 'doneSellETH', 'doneBuyETH'));
     }
