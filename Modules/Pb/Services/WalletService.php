@@ -4,6 +4,7 @@ namespace Modules\Pb\Services;
 
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use Mockery\Exception;
 use Models\EthWallet;
 use Models\BtcWallet;
 use Models\VndWallet;
@@ -177,6 +178,23 @@ class WalletService
                     if ($res && !empty($res['result']) && !empty($res['result']['transactionIndex'])) {
                         $order->status = 'done';
                         $order->save();
+
+                        $transaction = Transaction::where(['order_id' => $order->id])->first();
+                        if (!empty($transaction)) {
+                            $toUser = $this->getVndWallet($transaction->to_id);
+                            $toUser->amount += floatval($transaction->to_amount);
+                            $toUser->save();
+
+                            $fromUser = $this->getVndWallet($transaction->from_id);
+                            $fromUser->amount -= floatval($transaction->from_amount);
+                            if ($fromUser->amount < 0) {
+                                throw new \Exception("after transfer will be negative amount.");
+                            }
+                            $fromUser->save();
+
+                            $transaction->status = 'done';
+                            $transaction->save();
+                        }
                     }
                 }
             }

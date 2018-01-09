@@ -80,8 +80,8 @@ class OrderController extends BaseController
     public function all(Request $request, $type)
     {
         if ($type == 'sell') {
-            $listSeller = Order::where('order_type', 'sell')->orderBy('created_at', 'desc')->paginate(10);
-            $total = Order::where('order_type', 'sell')->count();
+            $listSeller = Order::where(['status' => 'waiting', 'order_type' => 'sell'])->orderBy('created_at', 'desc')->paginate(10);
+            $total = Order::where(['status' => 'waiting', 'order_type' => 'sell'])->count();
             $pagination = [
                 'total' => $total,
                 'page' => $request->get('page', 1),
@@ -90,8 +90,8 @@ class OrderController extends BaseController
             ];
             return view('pb::order.all_sell', compact('listSeller', 'pagination'));
         } else if ($type == 'buy') {
-            $listBuyer = Order::where('order_type', 'buy')->orderBy('created_at', 'desc')->paginate(10);
-            $total = Order::where('order_type', 'buy')->count();
+            $listBuyer = Order::where(['status' => 'waiting', 'order_type' => 'buy'])->orderBy('created_at', 'desc')->paginate(10);
+            $total = Order::where(['status' => 'waiting', 'order_type' => 'buy'])->count();
             $pagination = [
                 'total' => $total,
                 'page' => $request->get('page', 1),

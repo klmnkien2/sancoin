@@ -11,7 +11,7 @@
                                 <h3 class="box-title"><strong class="title-inner">List Of Sellers</strong></h3>
                             </div>
                             <div class="clearfix box-body">
-                                @if (!empty($listSeller))
+                                @if (!empty($pagination['total']))
                                 <div class="custom-scrollbar">
                                     <ul class="clearfix offer-list">
                                         @foreach ($listSeller as $seller)
@@ -46,7 +46,7 @@
                                     </ul>
                                 </div>
                                 @else
-                                <div class="text-center">{{trans('messages.message.list_is_empty')}}</div>
+                                <div class="text-center no-record">{{trans('messages.message.list_is_empty')}}</div>
                                 @endif
                             </div>
                         </div>
