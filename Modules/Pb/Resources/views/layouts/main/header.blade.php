@@ -46,11 +46,11 @@
 
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="exchange-link active"><a href="{{route('pb.order.index')}}">Exchange</a></li>
+                    <li class="exchange-link {!! menu_active(route('pb.order.index')) !!}"><a href="{{route('pb.order.index')}}">Exchange</a></li>
 <!--                     <li class="balances-link"><a href="#">Balances</a></li> -->
-                    <li class="wallet-eth"><a href="{{route('pb.wallet.eth')}}">ETH</a></li>
-                    <li class="wallet-btc"><a href="{{route('pb.wallet.btc')}}">BTC</a></li>
-                    <li class="wallet-vnd"><a href="{{route('pb.wallet.vnd')}}">VND</a></li>
+                    <li class="wallet-eth {!! menu_active(route('pb.wallet.eth')) !!}"><a href="{{route('pb.wallet.eth')}}">ETH</a></li>
+                    <li class="wallet-btc {!! menu_active(route('pb.wallet.btc')) !!}"><a href="{{route('pb.wallet.btc')}}">BTC</a></li>
+                    <li class="wallet-vnd {!! menu_active(route('pb.wallet.vnd')) !!}"><a href="{{route('pb.wallet.vnd')}}">VND</a></li>
                     @if(!Auth::check())
                     <li class="signin-link"><a href="#" data-toggle="modal" data-target="#signinModal">Sign In</a></li>
                     <li class="register-link button-type"><a href="#" data-toggle="modal" data-target="#registerModal">Register</a></li>

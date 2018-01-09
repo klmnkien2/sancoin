@@ -107,8 +107,16 @@ if (!function_exists('render_pagination')) {
 }
 
 if (!function_exists('menu_active')) {
-    function menu_active($url, $type = SYSTEM_ADMIN)
+    function menu_active($url, $type = 'pb')
     {
+        if ($type == 'pb') {
+            $curUrl = Request::url();
+            if (strpos($curUrl, $url) !== false) {
+                return 'active';
+            } else {
+                return '';
+            }
+        }
 
         $segments = explode('/', str_replace([url('/') . DIRECTORY_SEPARATOR], '', $url));
         $curSegments = Request::segments();
