@@ -48,6 +48,22 @@ class BitcoinService
         }
     }
 
+    public function getTransactionStatus($txhash)
+    {
+        $apiContexts = $this->initApiContext();
+        //$addressClient = new \BlockCypher\Client\AddressClient($apiContexts['BTC.main']);
+        $txClient = new \BlockCypher\Client\TXClient($apiContexts['BTC.test3']);
+        try {
+            //$txhash = 'debe69475832b8a093b8d4cc749afa261a7c62f2ed7ec4b84460e83f02e020db';
+            $transaction = $txClient->get($txhash);
+            //dd($transaction);
+            return !empty($transaction->getConfirmed()) && !empty($transaction->getReceived());
+        } catch (\Exception $ex) {
+            LogService::write(null, $ex);
+            return false;
+        }
+    }
+
     public function getAllInfo($addr)
     {
         $returnResult = [];

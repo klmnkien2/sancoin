@@ -164,6 +164,7 @@ class WalletService
 
     public function refeshOrderStatus()
     {
+        //$res = $this->bitcoinService->getTransactionStatus('');
         try {
             DB::beginTransaction();
             $orderList = Order::where(['status' => 'pending'])->get();
@@ -176,6 +177,32 @@ class WalletService
                     $res = $this->etherscanService->getTransactionStatus($order['hash']);
                     //dd($res);
                     if ($res && !empty($res['result']) && !empty($res['result']['transactionIndex'])) {
+                        $order->status = 'done';
+                        $order->save();
+
+                        $transaction = Transaction::where(['order_id' => $order->id])->first();
+                        if (!empty($transaction)) {
+                            $toUser = $this->getVndWallet($transaction->to_id);
+                            $toUser->amount += floatval($transaction->to_amount);
+                            $toUser->save();
+
+                            $fromUser = $this->getVndWallet($transaction->from_id);
+                            $fromUser->amount -= floatval($transaction->from_amount);
+                            if ($fromUser->amount < 0) {
+                                throw new \Exception("after transfer will be negative amount.");
+                            }
+                            $fromUser->save();
+
+                            $transaction->status = 'done';
+                            $transaction->save();
+                        }
+                    }
+                }
+
+                if ($order['coin_type'] == 'btc') {
+                    $status = $this->bitcoinService->getTransactionStatus($order['hash']);
+                    //dd($res);
+                    if ($status) {
                         $order->status = 'done';
                         $order->save();
 
