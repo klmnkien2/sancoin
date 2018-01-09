@@ -48,6 +48,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if (check_domain(env('DOMAIN_PB'))) {
+            //dd($exception);
+            return response()->view('pb::errors.500', [], 500);
+        }
         return parent::render($request, $exception);
     }
 }

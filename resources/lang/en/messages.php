@@ -110,5 +110,6 @@ return [
 		'update_vnd_wallet_fail' => 'Transfer wallet\'s Information fail.',
 		'not_map_profile_fullname' => 'Account name isn\'t map your profile fullname. Please recheck!',
         'need_to_update_vnd_wallet' => 'You need to update your VND wallet\'s information',
+        'error_500' => 'There is a problem with your request, please contact administrator for details.',
     ],
 ];
