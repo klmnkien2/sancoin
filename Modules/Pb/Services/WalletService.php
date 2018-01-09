@@ -9,6 +9,7 @@ use Models\BtcWallet;
 use Models\VndWallet;
 use Models\Profile;
 use Models\Order;
+use Models\Transaction;
 
 class WalletService
 {
@@ -102,6 +103,12 @@ class WalletService
         $inOrderVNDAsBuyer = Order::where(['status' => 'waiting', 'user_id' => $userId, 'order_type' => 'buy'])->sum('amount');
         $inOrderVNDAsSeller = Order::where(['status' => 'pending', 'partner_id' => $userId, 'order_type' => 'sell'])->sum('amount');
         return $inOrderVNDAsBuyer + $inOrderVNDAsSeller;
+    }
+
+    public function getTransactions($userId)
+    {
+        $tranList = Transaction::where(['from_id' => $userId])->orWhere(['to_id' => $userId])->get();
+        return $tranList;
     }
 
     public function getInOrderCoin($userId, $coin_type)

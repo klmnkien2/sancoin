@@ -78,6 +78,8 @@ return [
         'creator' => 'Creator',
         'user_summary' => 'User\'s summary',
         'in_order_money' => 'In order',
+        'buttonDeposit' => 'Deposit',
+        'deposit' => 'Deposit',
     ],
     'message' => [
         'reg_common_fail' => 'Registration is failed. Please try again!',
@@ -107,5 +109,6 @@ return [
 		'update_vnd_wallet_success' => 'Transfer wallet\'s Information successfully.',
 		'update_vnd_wallet_fail' => 'Transfer wallet\'s Information fail.',
 		'not_map_profile_fullname' => 'Account name isn\'t map your profile fullname. Please recheck!',
+        'need_to_update_vnd_wallet' => 'You need to update your VND wallet\'s information',
     ],
 ];

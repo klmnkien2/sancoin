@@ -11,6 +11,7 @@ use Modules\Pb\Validators\OrderValidator;
 use App\User;
 use Models\Attachment;
 use Models\Profile;
+use Models\Transaction;
 use Auth, DB;
 use Illuminate\Support\Facades\Storage;
 use Modules\Pb\Services\WalletService;
@@ -24,8 +25,11 @@ class WalletController extends BaseController
     protected $etherscanService;
     protected $bitcoinService;
 
-    public function __construct(WalletService $walletService, EtherscanService $etherscanService, BitcoinService $bitcoinService)
-    {
+    public function __construct(
+        WalletService $walletService,
+        EtherscanService $etherscanService,
+        BitcoinService $bitcoinService
+    ) {
         $this->walletService = $walletService;
         $this->etherscanService = $etherscanService;
         $this->bitcoinService = $bitcoinService;
@@ -52,7 +56,7 @@ class WalletController extends BaseController
             $data = $request->all();
             $data['user_id'] = Auth::id();
             $validator = $this->checkValidator($data, $profileValidator->validate());
-            if (! $validator->fails()) {
+            if (!$validator->fails()) {
                 do {
                     $photoArr = isset($data['images']) ? $data['images'] : [];
                     //dd($photoArr);
@@ -67,7 +71,7 @@ class WalletController extends BaseController
                     DB::beginTransaction();
                     unset($data['images']);
                     $profile = Profile::where('user_id', Auth::id())->first();
-                    if(!$profile) {
+                    if (!$profile) {
                         $profile = Profile::create($data);
                     } else {
                         $profile->fullname = $data['fullname'];
@@ -116,40 +120,40 @@ class WalletController extends BaseController
 
         return redirect(route('pb.getProfile'));
     }
-	
-	public function updateVND(Request $request)
+
+    public function updateVND(Request $request)
     {
-		$error = null;
+        $error = null;
         try {
             $orderValidator = new OrderValidator();
             $data = $request->all();
             $data['user_id'] = Auth::id();
-            
-			do {
-				$validator = $this->checkValidator($data, $orderValidator->validateUpdateWalletVnd());
-				if ($validator->fails()) {
-					$error = $validator->getMessageBag()->getMessages();
-					break;
-				}
-				// INSERT OR UPDATE RECORD
-				DB::beginTransaction();
-				$profile = Profile::where('user_id', Auth::id())->first();
-				if(empty($profile) || $profile['fullname'] != $data['account_name']) {
-					$error = [
-						'common' => [trans('messages.message.not_map_profile_fullname')]
-					];
-					break;
-				}
-				$wallet = $this->walletService->getVndWallet(Auth::id());
-				$wallet->account_name = $data['account_name'];
-				$wallet->account_number = $data['account_number'];
-				$wallet->bank_branch = $data['bank_branch'];
-				$wallet->save();
-				
-				DB::commit();
-				$success = true;
-				break;
-			} while (false);
+
+            do {
+                $validator = $this->checkValidator($data, $orderValidator->validateUpdateWalletVnd());
+                if ($validator->fails()) {
+                    $error = $validator->getMessageBag()->getMessages();
+                    break;
+                }
+                // INSERT OR UPDATE RECORD
+                DB::beginTransaction();
+                $profile = Profile::where('user_id', Auth::id())->first();
+                if (empty($profile) || $profile['fullname'] != $data['account_name']) {
+                    $error = [
+                        'common' => [trans('messages.message.not_map_profile_fullname')]
+                    ];
+                    break;
+                }
+                $wallet = $this->walletService->getVndWallet(Auth::id());
+                $wallet->account_name = $data['account_name'];
+                $wallet->account_number = $data['account_number'];
+                $wallet->bank_branch = $data['bank_branch'];
+                $wallet->save();
+
+                DB::commit();
+                $success = true;
+                break;
+            } while (false);
 
         } catch (\Exception $e) {
             LogService::write($request, $e);
@@ -163,7 +167,8 @@ class WalletController extends BaseController
         if (!empty($error)) {
             Common::setMessage($request, 'error', $error);
         } else {
-            Common::setMessage($request, 'success', ['common' => [trans('messages.message.update_vnd_wallet_success')]]);
+            Common::setMessage($request, 'success',
+                ['common' => [trans('messages.message.update_vnd_wallet_success')]]);
         }
 
         return redirect(route('pb.wallet.vnd'));
@@ -195,7 +200,8 @@ class WalletController extends BaseController
             //dd($transactionHistory);
         }
 
-        return view('pb::wallet.eth', compact('messages', 'walletAddress', 'avaiableAmount', 'inOrderCoin', 'transactionHistory'));
+        return view('pb::wallet.eth',
+            compact('messages', 'walletAddress', 'avaiableAmount', 'inOrderCoin', 'transactionHistory'));
     }
 
     public function btc(Request $request)
@@ -204,7 +210,7 @@ class WalletController extends BaseController
         $walletAddress = '0x0';
         $avaiableAmount = 0;
         $transactionHistory = [];
-		$inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
+        $inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
 
         $wallet = $this->walletService->getBtcWallet(Auth::id());
         //dd($wallet);
@@ -216,13 +222,15 @@ class WalletController extends BaseController
             $transactionHistory = $fullAddress['txs'];
         }
 
-        return view('pb::wallet.btc', compact('messages', 'walletAddress', 'avaiableAmount', 'transactionHistory', 'inOrderCoin'));
+        return view('pb::wallet.btc',
+            compact('messages', 'walletAddress', 'avaiableAmount', 'transactionHistory', 'inOrderCoin'));
     }
 
     public function vnd(Request $request)
     {
         $messages = Common::getMessage($request);
-        $transactionHistory = [];
+        $transactionHistory = $this->walletService->getTransactions(Auth::id());
+        //dd($transactionHistory);
 
         $wallet = $this->walletService->getVndWallet(Auth::id());
 
@@ -232,8 +240,8 @@ class WalletController extends BaseController
     public function withdraw(Request $request)
     {
         $error = null;
-		$data = $request->all();
-		
+        $data = $request->all();
+
         try {
             do {
                 $orderValidator = new OrderValidator;
@@ -242,67 +250,134 @@ class WalletController extends BaseController
                     $error = $validator->getMessageBag()->getMessages();
                     break;
                 }
-				
-				if ($data['coin_type'] == 'eth') {
-					$ethWallet = $this->walletService->getEthWallet(Auth::id());
-					$ethAddress = '0x' . $ethWallet->address;
-					$inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'eth');
-					$availableETH = 0;
-					$res = $this->etherscanService->getBalance($ethAddress);
-					if (!empty($res['result'])) {
-						$availableETH = $res['result'];
-					}
-					//dd($availableETH, $inOrderCoin);
-					$availableETH = $availableETH - floatval($inOrderCoin) * 1000000000000000000;
 
-					$amount = $request->get('amount', 0);
+                if ($data['coin_type'] == 'eth') {
+                    $ethWallet = $this->walletService->getEthWallet(Auth::id());
+                    $ethAddress = '0x' . $ethWallet->address;
+                    $inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'eth');
+                    $availableETH = 0;
+                    $res = $this->etherscanService->getBalance($ethAddress);
+                    if (!empty($res['result'])) {
+                        $availableETH = $res['result'];
+                    }
+                    //dd($availableETH, $inOrderCoin);
+                    $availableETH = $availableETH - floatval($inOrderCoin) * 1000000000000000000;
 
-					if ($availableETH < floatval($amount) * 1000000000000000000) {
-						$error = [
-							'common' => [trans('messages.message.order_not_enough_money', ['money' => 'ETH'])]
-						];
-						break;
-					}
-					
-					$txhash = $this->walletService->sendETH(Auth::id(), $data['to_address'], $amount);
-					if (!empty($txhash)) {
-						Common::setMessage($request, 'success', [
-							'common' => [trans('messages.message.transfer_money_success', ['money' => 'ETH']) . ' txhash ' . $txhash]
-						]);
-					} else {
-						throw new \Exception('Unknown exception when call ethereum service');
-					}
-				}
-				
-				if ($data['coin_type'] == 'btc') {
-					$btcWallet = $this->walletService->getBtcWallet(Auth::id());
-					$btcAddress = $btcWallet->address;
-					$btcInRequest = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
-					$availableBTC = $this->bitcoinService->getBalance($btcAddress);
-					$availableBTC = $availableBTC - floatval($btcInRequest) * 100000000;
-					$amount = $request->get('amount', 0);
+                    $amount = $request->get('amount', 0);
 
-					if ($availableBTC < floatval($amount) * 100000000) {
-						$error = [
-							'common' => [trans('messages.message.order_not_enough_money', ['money' => 'BTC'])]
-						];
-						break;
-					}
-					
-					$txhash = $this->walletService->sendBTC(Auth::id(), $data['to_address'], $amount);
-					if (!empty($txhash)) {
-						Common::setMessage($request, 'success', [
-							'common' => [trans('messages.message.transfer_money_success', ['money' => 'BTC']) . ' txhash ' . $txhash]
-						]);
-					} else {
-						throw new \Exception('Unknown exception when call bitcoin service');
-					}
-				}
+                    if ($availableETH < floatval($amount) * 1000000000000000000) {
+                        $error = [
+                            'common' => [trans('messages.message.order_not_enough_money', ['money' => 'ETH'])]
+                        ];
+                        break;
+                    }
+
+                    $txhash = $this->walletService->sendETH(Auth::id(), $data['to_address'], $amount);
+                    if (!empty($txhash)) {
+                        Common::setMessage($request, 'success', [
+                            'common' => [
+                                trans('messages.message.transfer_money_success',
+                                    ['money' => 'ETH']) . ' txhash ' . $txhash
+                            ]
+                        ]);
+                    } else {
+                        throw new \Exception('Unknown exception when call ethereum service');
+                    }
+                }
+
+                if ($data['coin_type'] == 'btc') {
+                    $btcWallet = $this->walletService->getBtcWallet(Auth::id());
+                    $btcAddress = $btcWallet->address;
+                    $btcInRequest = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
+                    $availableBTC = $this->bitcoinService->getBalance($btcAddress);
+                    $availableBTC = $availableBTC - floatval($btcInRequest) * 100000000;
+                    $amount = $request->get('amount', 0);
+
+                    if ($availableBTC < floatval($amount) * 100000000) {
+                        $error = [
+                            'common' => [trans('messages.message.order_not_enough_money', ['money' => 'BTC'])]
+                        ];
+                        break;
+                    }
+
+                    $txhash = $this->walletService->sendBTC(Auth::id(), $data['to_address'], $amount);
+                    if (!empty($txhash)) {
+                        Common::setMessage($request, 'success', [
+                            'common' => [
+                                trans('messages.message.transfer_money_success',
+                                    ['money' => 'BTC']) . ' txhash ' . $txhash
+                            ]
+                        ]);
+                    } else {
+                        throw new \Exception('Unknown exception when call bitcoin service');
+                    }
+                }
+
+                if ($data['coin_type'] == 'withdraw_vnd') {
+                    $vndInRequest = $this->walletService->getInOrderVND(Auth::id());
+                    $vndWallet = $this->walletService->getVndWallet(Auth::id());
+                    $availableVND = $vndWallet->amount;
+                    if ($vndInRequest + $data['amount'] > $availableVND) {
+                        $error = [
+                            'common' => [trans('messages.message.order_not_enough_money', ['money' => 'VND'])]
+                        ];
+                        break;
+                    }
+
+                    //OK then create transaction
+                    DB::beginTransaction();
+                    $transaction = [
+                        'order_id' => 0,
+                        'type' => 'withdraw',
+                        'status' => 'pending',
+                        'amount' => $data['amount'],
+                        'from_amount' => $data['amount'],
+                        'to_amount' => $data['amount'],
+                        'from_id' => 0,
+                        'to_id' => Auth::id(),
+                        'from_account' => 'admin',
+                        'to_account' => $vndWallet->account_number,
+                    ];
+                    $tran = Transaction::create($transaction);
+                    DB::commit();
+                    Common::setMessage($request, 'success', [
+                        'common' => [
+                            trans('messages.message.transfer_money_success',
+                                ['money' => 'VND'])
+                        ]
+                    ]);
+                }
+
+                if ($data['coin_type'] == 'deposit_vnd') {
+                    //OK then create transaction
+                    DB::beginTransaction();
+                    $transaction = [
+                        'order_id' => 0,
+                        'type' => 'deposit',
+                        'status' => 'pending',
+                        'amount' => $data['amount'],
+                        'from_amount' => $data['amount'],
+                        'to_amount' => $data['amount'],
+                        'from_id' => 0,
+                        'to_id' => Auth::id(),
+                        'from_account' => 'deposit',
+                        'to_account' => $vndWallet->account_number,
+                    ];
+                    $tran = Transaction::create($transaction);
+                    DB::commit();
+                    Common::setMessage($request, 'success', [
+                        'common' => [
+                            trans('messages.message.transfer_money_success',
+                                ['money' => 'VND'])
+                        ]
+                    ]);
+                }
             } while (false);
         } catch (\Exception $ex) {
             LogService::write($request, $ex);
+            DB::rollback();
             $error = [
-                'common' => [trans('messages.message.transfer_money_fail', ['money' => 'Coin'])]
+                'common' => [trans('messages.message.transfer_money_fail', ['money' => 'Coin/VND'])]
             ];
         }
 
@@ -310,12 +385,20 @@ class WalletController extends BaseController
             Common::setMessage($request, 'error', $error);
         }
 
-		if ($data['coin_type'] == 'btc') {
-			return redirect(route('pb.wallet.btc'));
-		}
-		
-		if ($data['coin_type'] == 'eth') {
-			return redirect(route('pb.wallet.eth'));
-		}
+        if ($data['coin_type'] == 'btc') {
+            return redirect(route('pb.wallet.btc'));
+        }
+
+        if ($data['coin_type'] == 'eth') {
+            return redirect(route('pb.wallet.eth'));
+        }
+
+        if ($data['coin_type'] == 'deposit_vnd') {
+            return redirect(route('pb.wallet.vnd'));
+        }
+
+        if ($data['coin_type'] == 'withdraw_vnd') {
+            return redirect(route('pb.wallet.vnd'));
+        }
     }
 }

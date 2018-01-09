@@ -12,7 +12,7 @@
                             </div>
                             <div class="clearfix box-body" style="padding: 15px;">
                                 <div class="offer-form">
-                                    
+
                                         <div class="clearfix form-inner">
 											<div>{!! ($messages?:'') !!}</div>
                                             <div class="clearix offer-form-top">
@@ -50,33 +50,60 @@
 											</form>
                                             <div class="service-fee-text">{{trans('messages.message.vnd_wallet_update_notice')}}</div>
 
-                                            <div class="hr-text"><span>{{trans('messages.label.withdraw')}}</span><hr></div>
+                                            <div class="hr-text"><span>{{trans('messages.label.deposit')}}</span><hr></div>
 
 											<form method="POST" type="post" action="{{route('pb.wallet.withdraw')}}">
-											{{ csrf_field() }}
-                                            <div class="form-group">
-                                                <label class="sr-only">{{trans('messages.label.amount')}}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-addon">{{trans('messages.label.amount')}}</div>
-                                                    <input type="text" name="amount" class="form-control" placeholder="VND">
+    											{{ csrf_field() }}
+                                                <div class="form-group">
+                                                    <label class="sr-only">{{trans('messages.label.amount')}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{trans('messages.label.amount')}}</div>
+                                                        <input type="text" name="amount" class="form-control" placeholder="VND">
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!--<div class="form-group">
-                                                <div>
-                                                    <input id="pg-withdraw-all" type="checkbox" class="form-control" style="width: auto; float: left; line-height: 40px;">
-                                                    <label style="margin-left:10px; line-height: 40px;">{{trans('messages.label.withdraw_all')}}</label>
+                                                <!--<div class="form-group">
+                                                    <div>
+                                                        <input id="pg-withdraw-all" type="checkbox" class="form-control" style="width: auto; float: left; line-height: 40px;">
+                                                        <label style="margin-left:10px; line-height: 40px;">{{trans('messages.label.withdraw_all')}}</label>
+                                                    </div>
+                                                </div>-->
+
+                                                <div class="button-group">
+    												<input type="hidden" name="coin_type" value="deposit_vnd">
+    												<input type="hidden" name="to_address" value="deposit_vnd">
+                                                    <button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonDeposit')}}</span></button>
                                                 </div>
-                                            </div>-->
-
-                                            <div class="button-group">
-												<input type="hidden" name="coin_type" value="vnd">
-												<input type="hidden" name="to_address" value="withdrawvnd">
-                                                <button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonWithdraw')}}</span></button>
-                                            </div>
 											</form>
+
+                                            <div class="hr-text"><span>{{trans('messages.label.withdraw')}}</span><hr></div>
+
+                                            <form method="POST" type="post" action="{{route('pb.wallet.withdraw')}}">
+                                                {{ csrf_field() }}
+                                                <div class="form-group">
+                                                    <label class="sr-only">{{trans('messages.label.amount')}}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">{{trans('messages.label.amount')}}</div>
+                                                        <input type="text" name="amount" class="form-control" placeholder="VND">
+                                                    </div>
+                                                </div>
+
+                                                <!--<div class="form-group">
+                                                    <div>
+                                                        <input id="pg-withdraw-all" type="checkbox" class="form-control" style="width: auto; float: left; line-height: 40px;">
+                                                        <label style="margin-left:10px; line-height: 40px;">{{trans('messages.label.withdraw_all')}}</label>
+                                                    </div>
+                                                </div>-->
+
+                                                <div class="button-group">
+                                                    <input type="hidden" name="coin_type" value="withdraw_vnd">
+                                                    <input type="hidden" name="to_address" value="withdrawvnd">
+                                                    <button type="submit" class="btn btn-flat-green"><span class="btn-inner">{{trans('messages.label.buttonWithdraw')}}</span></button>
+                                                </div>
+                                            </form>
+
                                         </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -96,7 +123,7 @@
                                             <thead>
                                                 <tr>
                                                     <th class="change"></th>
-                                                    <th>{{trans('messages.label.txhash')}}</th>
+                                                    <th>{{trans('messages.label.status')}}</th>
                                                     <th>{{trans('messages.label.date_time')}}</th>
                                                     <th>{{trans('messages.label.from')}}</th>
                                                     <th>{{trans('messages.label.to')}}</th>
@@ -106,16 +133,16 @@
                                             <tbody>
                                                 @foreach ($transactionHistory as $transaction)
                                                 <tr>
-                                                    @if ($transaction['from'] == $walletAddress)
+                                                    @if ($transaction['from_account'] == $wallet->account_number)
                                                         <td class="change"><span class="fa fa-arrow-circle-o-up"></span></td>
                                                     @else
                                                         <td class="change"><span class="fa fa-arrow-circle-o-down"></span></td>
                                                     @endif
-                                                    <td><span class="address-tag">{{$transaction['hash']}}</span></td>
-                                                    <td>{{ Carbon\Carbon::createFromTimestamp($transaction['timeStamp'])->diffForHumans() }}</td>
-                                                    <td><span class="address-tag">{{$transaction['from']}}</span></td>
-                                                    <td><span class="address-tag">{{$transaction['to']}}</span></td>
-                                                    <td class="number">{{ number_format(floatval($transaction['value'])/1000000000000000000, 18) }}</td>
+                                                    <td>{{$transaction['status']}}</td>
+                                                    <td>{{ Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $transaction['created_at'])->diffForHumans() }}</td>
+                                                    <td><span class="address-tag">{{$transaction['from_account']}}</span></td>
+                                                    <td><span class="address-tag">{{$transaction['to_account']}}</span></td>
+                                                    <td class="number">{{ number_format(floatval($transaction['amount']), 0 , '.' , ',') }}</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>

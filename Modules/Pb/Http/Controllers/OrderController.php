@@ -111,6 +111,14 @@ class OrderController extends BaseController
                     $order = Order::find($id);
                     DB::beginTransaction();
 
+                    $vndWallet = $this->walletService->getVndWallet(Auth::id());
+                    if (empty($vndWallet) || empty($vndWallet['account_number']) || empty($vndWallet['account_name'])) {
+                        $error = [
+                            'common' => [trans('messages.message.need_to_update_vnd_wallet')]
+                        ];
+                        break;
+                    }
+
                     if ($order['user_id'] == Auth::id()) {
                         $error = [
                             'common' => [trans('messages.message.error_order_belong_you')]
@@ -307,7 +315,7 @@ class OrderController extends BaseController
             if (! $validator->fails()) {
                 do {
                     if ($data['order_type'] == 'buy') {
-                        $vndInRequest = Order::where(['status' => 'waiting', 'user_id' => Auth::id(), 'order_type' => 'buy'])->sum('amount');
+                        $vndInRequest = $this->walletService->getInOrderVND(Auth::id());
                         $vndWallet = $this->walletService->getVndWallet(Auth::id());
                         $availableVND = $vndWallet->amount;
                         if ($vndInRequest + $data['amount'] > $availableVND) {
