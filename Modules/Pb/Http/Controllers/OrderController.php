@@ -102,181 +102,184 @@ class OrderController extends BaseController
         }
     }
 
-    public function detail(Request $request, $id)
+    public function accept(Request $request, $id)
     {
-        if ($request->isMethod('post')) {
-            $error = null;
-            try {
-                do {
-                    $order = Order::find($id);
-                    DB::beginTransaction();
+        $error = null;
+        try {
+            do {
+                $order = Order::find($id);
+                DB::beginTransaction();
 
+                $vndWallet = $this->walletService->getVndWallet(Auth::id());
+                if (empty($vndWallet) || empty($vndWallet['account_number']) || empty($vndWallet['account_name'])) {
+                    $error = [
+                        'common' => [trans('messages.message.need_to_update_vnd_wallet')]
+                    ];
+                    break;
+                }
+
+                if ($order['user_id'] == Auth::id()) {
+                    $error = [
+                        'common' => [trans('messages.message.error_order_belong_you')]
+                    ];
+                    break;
+                }
+
+                //Accept a sell mean you buy coin by vnd
+                if ($order['order_type'] == 'sell') {
                     $vndWallet = $this->walletService->getVndWallet(Auth::id());
-                    if (empty($vndWallet) || empty($vndWallet['account_number']) || empty($vndWallet['account_name'])) {
+                    $inOrderVND = $this->walletService->getInOrderVND(Auth::id());
+                    $availableVND = $vndWallet->amount - $inOrderVND;
+
+                    if ($availableVND < $order['amount']) {
                         $error = [
-                            'common' => [trans('messages.message.need_to_update_vnd_wallet')]
+                            'common' => [trans('messages.message.order_not_enough_money', ['money' => 'VND'])]
                         ];
                         break;
                     }
 
-                    if ($order['user_id'] == Auth::id()) {
-                        $error = [
-                            'common' => [trans('messages.message.error_order_belong_you')]
-                        ];
-                        break;
-                    }
-
-                    //Accept a sell mean you buy coin by vnd
-                    if ($order['order_type'] == 'sell') {
-                        $vndWallet = $this->walletService->getVndWallet(Auth::id());
-                        $inOrderVND = $this->walletService->getInOrderVND(Auth::id());
-                        $availableVND = $vndWallet->amount - $inOrderVND;
-
-                        if ($availableVND < $order['amount']) {
+                    if ($order['coin_type'] == 'btc') {
+                        $btcWallet = $this->walletService->getBtcWallet(Auth::id());
+                        $btcAddress = $btcWallet->address;
+                        $txhash = $this->walletService->sendBTC($order['user_id'], $btcAddress, $order['coin_amount']);
+                        if (empty($txhash)) {
                             $error = [
-                                'common' => [trans('messages.message.order_not_enough_money', ['money' => 'VND'])]
+                                'common' => [trans('messages.message.transfer_money_fail', ['money' => 'BTC'])]
+                            ];
+                            break;
+                        }
+                        $order->hash = $txhash;
+                    }
+
+                    if ($order['coin_type'] == 'eth') {
+                        $ethWallet = $this->walletService->getEthWallet(Auth::id());
+                        $ethAddress = '0x' . $ethWallet->address;
+                        $txhash = $this->walletService->sendETH($order['user_id'], $ethAddress, $order['coin_amount']);
+                        if (empty($txhash)) {
+                            $error = [
+                                'common' => [trans('messages.message.transfer_money_fail', ['money' => 'ETH'])]
+                            ];
+                            break;
+                        }
+                        $order->hash = $txhash;
+                    }
+                }
+
+                //Accept a sell mean you buy coin by vnd
+                if ($order['order_type'] == 'buy') {
+                    if ($order['coin_type'] == 'btc') {
+                        $btcWallet = $this->walletService->getBtcWallet(Auth::id());
+                        $btcAddress = $btcWallet->address;
+                        $inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
+                        $availableBTC = $this->bitcoinService->getBalance($btcAddress);
+                        $availableBTC = $availableBTC - floatval($inOrderCoin) * 100000000;
+
+                        if ($availableBTC < $order['coin_amount']) {
+                            $error = [
+                                'common' => [trans('messages.message.order_not_enough_money', ['money' => 'BTC'])]
+                            ];
+                            break;
+                        }
+                        // transfer coin and get hash
+                        $receiveBtcWallet = $this->walletService->getBtcWallet($order['user_id']);
+                        $receiveBtcAddress = $receiveBtcWallet->address;
+                        $txhash = $this->walletService->sendBTC(Auth::id(), $receiveBtcAddress, $order['coin_amount']);
+                        if (empty($txhash)) {
+                            $error = [
+                                'common' => [trans('messages.message.transfer_money_fail', ['money' => 'BTC'])]
+                            ];
+                            break;
+                        }
+                        $order->hash = $txhash;
+                    }
+
+                    if ($order['coin_type'] == 'eth') {
+                        $ethWallet = $this->walletService->getEthWallet(Auth::id());
+                        $ethAddress = '0x' . $ethWallet->address;
+                        $inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'eth');
+                        $availableETH = 0;
+                        $res = $this->etherscanService->getBalance($ethAddress);
+                        if (!empty($res['result'])) {
+                            $availableETH = $res['result'];
+                        }
+                        $availableETH = $availableETH - floatval($inOrderCoin) * 1000000000000000000;
+
+                        if ($availableETH < $order['coin_amount']) {
+                            $error = [
+                                'common' => [trans('messages.message.order_not_enough_money', ['money' => 'ETH'])]
                             ];
                             break;
                         }
 
-                        if ($order['coin_type'] == 'btc') {
-                            $btcWallet = $this->walletService->getBtcWallet(Auth::id());
-                            $btcAddress = $btcWallet->address;
-                            $txhash = $this->walletService->sendBTC($order['user_id'], $btcAddress, $order['coin_amount']);
-                            if (empty($txhash)) {
-                                $error = [
-                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'BTC'])]
-                                ];
-                                break;
-                            }
-                            $order->hash = $txhash;
+                        // transfer coin and get hash
+                        $receiveEthWallet = $this->walletService->getEthWallet($order['user_id']);
+                        $receiveEthAddress = '0x' . $receiveEthWallet->address;
+                        $txhash = $this->walletService->sendETH(Auth::id(), $receiveEthAddress, $order['coin_amount']);
+                        if (empty($txhash)) {
+                            $error = [
+                                'common' => [trans('messages.message.transfer_money_fail', ['money' => 'ETH'])]
+                            ];
+                            break;
                         }
-
-                        if ($order['coin_type'] == 'eth') {
-                            $ethWallet = $this->walletService->getEthWallet(Auth::id());
-                            $ethAddress = '0x' . $ethWallet->address;
-                            $txhash = $this->walletService->sendETH($order['user_id'], $ethWallet, $order['coin_amount']);
-                            if (empty($txhash)) {
-                                $error = [
-                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'ETH'])]
-                                ];
-                                break;
-                            }
-                            $order->hash = $txhash;
-                        }
+                        $order->hash = $txhash;
                     }
+                }
 
-                    //Accept a sell mean you buy coin by vnd
-                    if ($order['order_type'] == 'buy') {
-                        if ($order['coin_type'] == 'btc') {
-                            $btcWallet = $this->walletService->getBtcWallet(Auth::id());
-                            $btcAddress = $btcWallet->address;
-                            $inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'btc');
-                            $availableBTC = $this->bitcoinService->getBalance($btcAddress);
-                            $availableBTC = $availableBTC - floatval($inOrderCoin) * 100000000;
-
-                            if ($availableBTC < $order['coin_amount']) {
-                                $error = [
-                                    'common' => [trans('messages.message.order_not_enough_money', ['money' => 'BTC'])]
-                                ];
-                                break;
-                            }
-                            // transfer coin and get hash
-                            $receiveBtcWallet = $this->walletService->getBtcWallet($order['user_id']);
-                            $receiveBtcAddress = $receiveBtcWallet->address;
-                            $txhash = $this->walletService->sendBTC(Auth::id(), $receiveBtcAddress, $order['coin_amount']);
-                            if (empty($txhash)) {
-                                $error = [
-                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'BTC'])]
-                                ];
-                                break;
-                            }
-                            $order->hash = $txhash;
-                        }
-
-                        if ($order['coin_type'] == 'eth') {
-                            $ethWallet = $this->walletService->getEthWallet(Auth::id());
-                            $ethAddress = '0x' . $ethWallet->address;
-                            $inOrderCoin = $this->walletService->getInOrderCoin(Auth::id(), 'eth');
-                            $availableETH = 0;
-                            $res = $this->etherscanService->getBalance($ethAddress);
-                            if (!empty($res['result'])) {
-                                $availableETH = $res['result'];
-                            }
-                            $availableETH = $availableETH - floatval($inOrderCoin) * 1000000000000000000;
-
-                            if ($availableETH < $order['coin_amount']) {
-                                $error = [
-                                    'common' => [trans('messages.message.order_not_enough_money', ['money' => 'ETH'])]
-                                ];
-                                break;
-                            }
-
-                            // transfer coin and get hash
-                            $receiveEthWallet = $this->walletService->getEthWallet($order['user_id']);
-                            $receiveEthAddress = '0x' . $receiveEthWallet->address;
-                            $txhash = $this->walletService->sendETH(Auth::id(), $receiveEthAddress, $order['coin_amount']);
-                            if (empty($txhash)) {
-                                $error = [
-                                    'common' => [trans('messages.message.transfer_money_fail', ['money' => 'ETH'])]
-                                ];
-                                break;
-                            }
-                            $order->hash = $txhash;
-                        }
-                    }
-
-                    //OK to get transaction
-                    $transaction = [
-                        'order_id' => $order->id,
-                        'status' => 'pending',
-                        'amount' => $order->amount,
-                    ];
-
-                    $transaction['to_amount'] = floatval($order->amount) * (1 - floatval($order->fee));
-                    $transaction['from_amount'] = floatval($order->amount) * (1 + floatval($order->fee));
-
-                    if ($order['order_type'] == 'buy') {// mean you will sell coin, and receive vnd
-                        $transaction['from_id'] = $order->user_id;
-                        $vndWallet = $this->walletService->getVndWallet($order->user_id);
-                        $transaction['from_account'] = $vndWallet->account_number;
-
-                        $transaction['to_id'] = Auth::id();
-                        $vndWallet = $this->walletService->getVndWallet(Auth::id());
-                        $transaction['to_account'] = $vndWallet->account_number;
-                    }
-                    if ($order['order_type'] == 'sell') {//mean you will buy coin
-                        $transaction['from_id'] = Auth::id();
-                        $vndWallet = $this->walletService->getVndWallet(Auth::id());
-                        $transaction['from_account'] = $vndWallet->account_number;
-
-                        $transaction['to_id'] = $order->user_id;
-                        $vndWallet = $this->walletService->getVndWallet($order->user_id);
-                        $transaction['to_account'] = $vndWallet->account_number;
-                    }
-                    $tran = Transaction::create($transaction);
-
-                    $order->parner_id = Auth::id();
-                    $order->status = 'pending';
-                    $order->transaction_id = $tran->id;
-                    $order->save();
-                    DB::commit();
-                    Common::setMessage($request, 'success', ['common' => [trans('messages.message.order_done')]]);
-                } while (false);
-
-            } catch (\Exception $ex) {
-                LogService::write($request, $ex);
-                DB::rollback();
-                $error = [
-                    'common' => [trans('messages.message.order_fail')]
+                //OK to get transaction
+                $transaction = [
+                    'order_id' => $order->id,
+                    'status' => 'pending',
+                    'amount' => $order->amount,
                 ];
-            }
 
-            if (!empty($error)) {
-                Common::setMessage($request, 'error', $error);
-            }
+                $transaction['to_amount'] = floatval($order->amount) * (1 - floatval($order->fee));
+                $transaction['from_amount'] = floatval($order->amount) * (1 + floatval($order->fee));
+
+                if ($order['order_type'] == 'buy') {// mean you will sell coin, and receive vnd
+                    $transaction['from_id'] = $order->user_id;
+                    $vndWallet = $this->walletService->getVndWallet($order->user_id);
+                    $transaction['from_account'] = $vndWallet->account_number;
+
+                    $transaction['to_id'] = Auth::id();
+                    $vndWallet = $this->walletService->getVndWallet(Auth::id());
+                    $transaction['to_account'] = $vndWallet->account_number;
+                }
+                if ($order['order_type'] == 'sell') {//mean you will buy coin
+                    $transaction['from_id'] = Auth::id();
+                    $vndWallet = $this->walletService->getVndWallet(Auth::id());
+                    $transaction['from_account'] = $vndWallet->account_number;
+
+                    $transaction['to_id'] = $order->user_id;
+                    $vndWallet = $this->walletService->getVndWallet($order->user_id);
+                    $transaction['to_account'] = $vndWallet->account_number;
+                }
+                $tran = Transaction::create($transaction);
+
+                $order->partner_id = Auth::id();
+                $order->status = 'pending';
+                $order->transaction_id = $tran->id;
+                $order->save();
+                DB::commit();
+                Common::setMessage($request, 'success', ['common' => [trans('messages.message.order_done')]]);
+            } while (false);
+
+        } catch (\Exception $ex) {
+            dd($ex);
+            LogService::write($request, $ex);
+            DB::rollback();
+            $error = [
+                'common' => [trans('messages.message.order_fail')]
+            ];
         }
 
+        if (!empty($error)) {
+            Common::setMessage($request, 'error', $error);
+        }
+        return redirect(route('pb.order.detail', $id));
+    }
+
+    public function detail(Request $request, $id)
+    {
         $order = Order::find($id);
         if (empty($order)) {
             $error = [

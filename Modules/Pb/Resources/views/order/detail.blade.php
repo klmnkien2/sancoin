@@ -12,7 +12,7 @@
                             </div>
                             <div class="clearfix box-body" style="padding: 15px;">
                                 <div class="offer-form">
-                                    <form enctype="multipart/form-data" method="POST" type="post" action="">
+                                    <form method="POST" type="post" action="{{ route('pb.order.accept', $order['id']) }}">
                                         <div class="clearfix form-inner">
                                             <div class="alert-message">{!! ($messages?:'') !!}</div>
                                             @if (!empty($order))
