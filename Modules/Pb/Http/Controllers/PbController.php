@@ -31,8 +31,8 @@ class PbController extends BaseController
      */
     public function index()
     {
-        $listSeller = Order::where('order_type', 'sell')->orderBy('created_at', 'desc')->paginate(10);
-        $listBuyer = Order::where('order_type', 'buy')->orderBy('created_at', 'desc')->paginate(10);
+        $listSeller = Order::where(['status' => 'waiting', 'order_type' => 'sell'])->orderBy('created_at', 'desc')->paginate(10);
+        $listBuyer = Order::where(['status' => 'waiting', 'order_type' => 'buy'])->orderBy('created_at', 'desc')->paginate(10);
 //         dd($listSeller, $listBuyer);
 
         return view('pb::index')->with(compact('listSeller', 'listBuyer'));

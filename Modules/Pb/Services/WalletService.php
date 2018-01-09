@@ -10,6 +10,7 @@ use Models\VndWallet;
 use Models\Profile;
 use Models\Order;
 use Models\Transaction;
+use Auth, DB;
 
 class WalletService
 {
@@ -58,7 +59,7 @@ class WalletService
 
     private function nodeRunPath()
     {
-        return storage_path('app/nodewin/node');
+        return storage_path('app/node_win/node');
     }
 
     public function getBtcWallet($userId)
@@ -159,5 +160,32 @@ class WalletService
 		//dd($privateKey);
         return $this->bitcoinService->send($fromAddress, $privateKey, $toAddress, $amount * 100000000);
     }
+
+    public function refeshOrderStatus()
+    {
+        try {
+            DB::beginTransaction();
+            $orderList = Order::where(['status' => 'pending'])->get();
+            foreach ($orderList as $order) {
+                if (empty($order['hash'])) {
+                    continue;
+                }
+
+                if ($order['coin_type'] == 'eth') {
+                    $res = $this->etherscanService->getTransactionStatus($order['hash']);
+                    //dd($res);
+                    if ($res && !empty($res['result']) && !empty($res['result']['transactionIndex'])) {
+                        $order->status = 'done';
+                        $order->save();
+                    }
+                }
+            }
+            DB::commit();
+        } catch (\Exception $ex) {
+            LogService::write(null, $ex);
+            DB::rollback();
+        }
+    }
+
 }
 

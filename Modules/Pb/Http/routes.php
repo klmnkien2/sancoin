@@ -1,6 +1,6 @@
 <?php
 if (check_domain(env('DOMAIN_PB'))) {
-    Route::group(['middleware' => 'web', 'namespace' => 'Modules\Pb\Http\Controllers'], function ()
+    Route::group(['middleware' => ['web', 'refesh_order_status'], 'namespace' => 'Modules\Pb\Http\Controllers'], function ()
     {
         Route::get('/', 'PbController@index')->name('pb.index');
         Route::get('/home', 'PbController@index')->name('pb.home');

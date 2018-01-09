@@ -30,7 +30,7 @@ class EtherscanService
 //         $this->apiKey = $apiKey;
     }
 
-    protected function request($aParameters = array())
+    protected function request($aParameters = array(), $useApiKey = true)
     {
         $aResult = false;
 
@@ -38,56 +38,19 @@ class EtherscanService
             return $aResult;
         }
 
-        $aParameters['apikey'] = $this->apiKey;
+        if ($useApiKey) {
+            $aParameters['apikey'] = $this->apiKey;
+        }
         $url = $this->url . '?' . http_build_query($aParameters);
         //dd($url);
 
         $client = new Client();
         $response = $client->get($url);
         $json = $response->getBody();
-        //$json = file_get_contents($url);
-        //$json = $this->file_get_contents_curl($url);
+
         $aResult = json_decode($json, TRUE);
 
         return $aResult;
-    }
-    private function file_get_contents_curl($url)
-    {
-        $ch = curl_init ();
-
-        curl_setopt ( $ch, CURLOPT_AUTOREFERER, TRUE );
-        curl_setopt ( $ch, CURLOPT_HEADER, 0 );
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt ( $ch, CURLOPT_URL, $url );
-        curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, TRUE );
-
-        $data = curl_exec ( $ch );
-        curl_close ( $ch );
-
-        return $data;
-    }
-
-    protected function post($url, $request)
-    {
-        $request = json_encode($request);
-        $response = null;
-
-        // performs the HTTP POST
-        $opts = array ('http' => array (
-            'method'  => 'POST',
-            'header'  => 'Content-type: application/json',
-            'content' => $request
-        ));
-        $context  = stream_context_create($opts);
-        if ($fp = fopen($url, 'r', false, $context)) {
-            $response = '';
-            while($row = fgets($fp)) {
-                $response.= trim($row)."\n";
-            }
-            $response = json_decode($response,true);
-        }
-
-        return $response;
     }
 
     public function getBalance($addr)
@@ -138,6 +101,18 @@ class EtherscanService
         ];
 
         return $this->request($params);
+    }
+
+    public function getTransactionStatus($txhash)
+    {
+        $params = [
+            'module' => 'proxy',
+            'action' => 'eth_getTransactionByHash',
+            'txhash' => $txhash,
+            'apikey' => 'YourApiKeyToken'
+        ];
+
+        return $this->request($params, false);
     }
 }
 

@@ -232,8 +232,8 @@ class OrderController extends BaseController
                     'amount' => $order->amount,
                 ];
 
-                $transaction['to_amount'] = floatval($order->amount) * (1 - floatval($order->fee));
-                $transaction['from_amount'] = floatval($order->amount) * (1 + floatval($order->fee));
+                $transaction['to_amount'] = ceil(floatval($order->amount) * (1 - floatval($order->fee)));
+                $transaction['from_amount'] = ceil(floatval($order->amount) * (1 + floatval($order->fee)));
 
                 if ($order['order_type'] == 'buy') {// mean you will sell coin, and receive vnd
                     $transaction['from_id'] = $order->user_id;
@@ -264,7 +264,6 @@ class OrderController extends BaseController
             } while (false);
 
         } catch (\Exception $ex) {
-            dd($ex);
             LogService::write($request, $ex);
             DB::rollback();
             $error = [
