@@ -64,14 +64,51 @@ class BitcoinService
                 $transaction['hash'] = $tx->getHash();
                 //$addresses = $tx->getAddresses();
 
-                $transaction['to'] = $tx->getOutputs()[0]->getAddresses()[0];
-                $transaction['from'] = $tx->getInputs()[0]->getAddresses()[0];
-                if ($transaction['to'] == $addr) {
-                    $transaction['value'] = $tx->getOutputs()[0]->getValue();
+                $isSent = false;
+                foreach ($tx->getInputs() as $input) {
+                    if ($isSent) break;
+                    foreach ($input->getAddresses() as $aAddress) {
+                        if ($addr == $aAddress) {
+                            $isSent = true;
+                            break;
+                        }
+                    }
                 }
-                if ($transaction['from'] == $addr) {
-                    $transaction['value'] = $tx->getInputs()[0]->getOutputValue();
+                //var_dump($isSent);
+                if ($isSent) {
+                    $transaction['from'] = $addr;
+                    $transaction['to'] = null;
+                } else {
+                    $transaction['from'] = null;
+                    $transaction['to'] = $addr;
                 }
+
+                $transaction['value'] = null;
+                foreach ($tx->getOutputs() as $output) {
+                    foreach ($output->getAddresses() as $aAddress) {
+                        if ($addr == $aAddress && !$isSent) {
+                            $transaction['to'] = $aAddress;
+                            $transaction['value'] = $output->getValue();
+                            break;
+                        } else if ($isSent && $addr != $aAddress) {
+                            $transaction['to'] = $aAddress;
+                            $transaction['value'] = $output->getValue();
+                            break;
+                        }
+                    }
+                    if (!empty($transaction['value'])) {
+                        break;
+                    }
+                }
+
+//                $transaction['to'] = $tx->getOutputs()[0]->getAddresses()[0];
+//                $transaction['from'] = $tx->getInputs()[0]->getAddresses()[0];
+//                if ($transaction['to'] == $addr) {
+//                    $transaction['value'] = $tx->getOutputs()[0]->getValue();
+//                }
+//                if ($transaction['from'] == $addr) {
+//                    $transaction['value'] = $tx->getInputs()[0]->getOutputValue();
+//                }
 
                 $transaction['received'] = $tx->getReceived();
                 try {

@@ -60,7 +60,7 @@ class WalletService
 
     private function nodeRunPath()
     {
-        return storage_path('app/node_win/node');
+        return storage_path('app/node_run/bin/node');
     }
 
     public function getBtcWallet($userId)
@@ -134,7 +134,7 @@ class WalletService
         $this->selectNodejsFolder();
         $nodeRunPath = $this->nodeRunPath();
         $cmd = exec("\"$nodeRunPath\" script.js sendETH $fromAddress $toAddress $amount $privateKey $ethereum_nonce 2>&1", $out, $err);
-
+        //dd($out, $err);
         foreach ($out as $line) {
             if(0 === strpos($line, '<SANCOIN>')) {
                 $signed_data = get_string_between($line, '<SANCOIN>', '</SANCOIN>');
