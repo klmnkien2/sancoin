@@ -1,0 +1,16 @@
+{
+    "name": "Sa",
+    "alias": "sa",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Sa\\Providers\\SaServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "start.php"
+    ],
+    "requires": []
+}
