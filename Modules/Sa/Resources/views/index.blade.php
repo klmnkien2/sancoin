@@ -1,4 +1,4 @@
-@extends('sa::layouts.master')
+@extends('sa::layouts.main')
 
 @section('content')
     <h1>Hello World</h1>
