@@ -30,13 +30,13 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="{{route('sa.login')}}">{{trans('admin.label.login')}}</a>
+        <a href="{{route('admin.login')}}">{{trans('admin.label.login')}}</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg"></p>
 
-        <form action="{{route('sa.postLogin')}}" method="post">
+        <form action="{{route('admin.postLogin')}}" method="post">
             {!! csrf_field() !!}
             {!! $messages !!}
             <div class="form-group has-feedback">
