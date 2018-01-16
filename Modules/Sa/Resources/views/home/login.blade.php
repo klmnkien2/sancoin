@@ -40,7 +40,7 @@
             {!! csrf_field() !!}
             {!! $messages !!}
             <div class="form-group has-feedback">
-                <input type="email" name="email" class="form-control" placeholder="{{trans('admin.label.username')}}" required minlength="8" maxlength="255">
+                <input type="text" name="username" class="form-control" placeholder="{{trans('admin.label.username')}}" required minlength="4" maxlength="255">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">

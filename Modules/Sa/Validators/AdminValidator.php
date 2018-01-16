@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Pb\Validators;
+namespace Modules\Sa\Validators;
 
 class AdminValidator
 {

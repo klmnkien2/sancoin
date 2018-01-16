@@ -5,9 +5,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 use Modules\Sa\Helper\Common;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Modules\Sa\Validators\AdminValidator;
 
 class AdminLoginController extends Controller
 {
+
+    use AuthenticatesUsers;
+
     public function __construct()
     {
         $this->middleware('guest:admin');
@@ -21,33 +26,43 @@ class AdminLoginController extends Controller
 
     public function postLogin(Request $request)
     {
-        if(!$this->hasTooManyLoginAttempts($request)){
-            try {
-                $this->incrementLoginAttempts($request);
-                $validator = new AdminValidator();
-                $validate = $this->checkValidator($request->all(), $validator->validateLogin());
+        $error = trans('auth.failed');
+        do {
+            if ($this->hasTooManyLoginAttempts($request)) {
+                $this->fireLockoutEvent($request);
 
-                if(!$validate->fails()){
-                    if (Auth::guard('web_sa')->attempt(['email' => $request->get('email'), 'password' => $request->get('password')])) {
-                        return redirect()->intended(route('admin.index'));
-                    } else {
-                        $error = [trans('labels_sa.SA_L001_M001')];
-                    }
-                }else{
-                    $error = $validate->getMessageBag();
-                }
-            } catch (\Exception $e) {
-                LogService::write($request, $e);
-                $error = [trans('labels_sa.SA_L001_M001')];
+                $seconds = $this->limiter()->availableIn(
+                    $this->throttleKey($request)
+                );
+
+                $error = trans('auth.throttle', ['seconds' => $seconds]);
+                break;
             }
-        }else{
-            $this->fireLockoutEvent($request);
-            $seconds = $this->limiter()->availableIn(
-                $this->throttleKey($request)
-            );
-            $message = str_replace(':seconds', $seconds, trans('labels_sa.SA_L001_M002'));
-            $error = [$message];
-        }
-        return $this->redirectToLogin($request, $error);
+
+            $validator = new AdminValidator();
+            $validate = $this->checkValidator($request->all(), $validator->validateLogin());
+            if ($validate->fails()) {
+                $error = array_values($validate->getMessageBag()->getMessages())[0];
+                break;
+            }
+
+            if (Auth::guard('admin')->attempt([
+                'username' => $request->get('username'),
+                'password' => $request->get('password')
+            ])) {
+                return redirect()->intended(route('admin.index'));
+            }
+        } while (false);
+        //dd($error);
+        Common::setMessage($request, MESSAGE_STATUS_ERROR, $error);
+        return redirect(route('admin.login'));
+    }
+
+    public function checkValidator($data, $validators) {
+        $rules = isset($validators['rules']) ? $validators['rules'] : [];
+        $messages = isset($validators['messages']) ? $validators['messages'] : [];
+        $attributes = isset($validators['attributes']) ? $validators['attributes'] : [];
+
+        return validator($data, $rules, $messages, $attributes);
     }
 }
