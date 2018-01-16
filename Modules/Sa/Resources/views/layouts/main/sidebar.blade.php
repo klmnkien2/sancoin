@@ -7,8 +7,7 @@
                 <i class="fa fa-user-circle fa-3x"></i>
             </div>
             <div class="pull-left info">
-                {{--<p>{{Auth::guard('web_sa')->user()->email}}</p>--}}
-                <p>kiendv</p>
+                <p>{{Auth::guard('admin')->user()->email}}</p>
                 <a><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
@@ -16,7 +15,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
             <li class="">
-                <a href="{{route('sa.index')}}">
+                <a href="{{route('admin.index')}}">
                     <i class="fa fa-bar-chart"></i> <span>{{trans('admin.label.dashboard')}}</span>
                 </a>
             </li>

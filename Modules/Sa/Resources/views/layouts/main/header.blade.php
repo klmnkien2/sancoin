@@ -1,6 +1,6 @@
 <header class="main-header">
     <!-- Logo -->
-    <a href="{{route('sa.index')}}" class="logo">
+    <a href="{{route('admin.index')}}" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>S</b>C</span>
         <!-- logo for regular state and mobile devices -->
@@ -22,7 +22,7 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-user-circle"></i>
-                        {{--<span class="hidden-xs">{{Auth::guard('web_sa')->user()->email}}</span>--}}
+                        <span class="hidden-xs">{{Auth::guard('admin')->user()->email}}</span>
                         <span class="hidden-xs">kiendv</span>
                     </a>
                     <ul class="dropdown-menu">
@@ -31,14 +31,13 @@
                             <i class="fa fa-user-circle-o fa-4x"></i>
 
                             <p>
-                                {{--{{Auth::guard('web_sa')->user()->email}}--}}
-                                kiendv
+                                {{Auth::guard('admin')->user()->email}}
                             </p>
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div>
-                                <a href="{{route('sa.logout')}}" class="col-xs-12 btn btn-default btn-flat">Sign out</a>
+                                <a href="{{route('admin.logout')}}" class="col-xs-12 btn btn-default btn-flat">Sign out</a>
                             </div>
                         </li>
                     </ul>
