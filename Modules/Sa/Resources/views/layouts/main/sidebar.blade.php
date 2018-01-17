@@ -43,7 +43,7 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="#"><i class="fa fa-circle-o"></i> {{trans('admin.label.user_verification')}}</a></li>
+                    <li><a href="{{route('admin.user_list')}}"><i class="fa fa-circle-o"></i> {{trans('admin.label.user_verification')}}</a></li>
                 </ul>
             </li>
         </ul>

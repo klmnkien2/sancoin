@@ -23,7 +23,6 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-user-circle"></i>
                         <span class="hidden-xs">{{Auth::guard('admin')->user()->email}}</span>
-                        <span class="hidden-xs">kiendv</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->

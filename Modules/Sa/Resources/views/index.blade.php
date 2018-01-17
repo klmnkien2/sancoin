@@ -1,5 +1,7 @@
 @extends('sa::layouts.main')
-
+@section('title')
+    {{trans('admin.label.dashboard')}}
+@endsection
 @section('content')
     <h1>Hello World</h1>
 

@@ -20,7 +20,13 @@ class HomeController extends BaseController
         return view('sa::index');
     }
 
-
+    public function userList(Request $request)
+    {
+        list($listClientManager, $total, $page, $per) = $this->clientManagerService->getClientManagerList($request->all());
+        list($paginationText, $paginationHtml) = render_pagination($total, $per, $page, $request->all());
+        $messages = Common::getMessage($request);
+        return view('sa::home.user_list')->with(compact('messages'));
+    }
 
     public function getLogout()
     {

@@ -5,6 +5,7 @@ return [
         'title' => 'SystemAdmin'
     ],
     'label' => [
+        'title_common' => 'Sancoin',
         'titlePageLogin' => 'Login',
         'login' => 'Login',
         'username' => 'Username',
@@ -15,7 +16,9 @@ return [
         'transaction_management' => "Transaction's management",
         'report' => "Report",
         'system_fee' => 'System fee',
-        'user_verification' => "Request of verification"
+        'user_verification' => "Request of verification",
+        'user_list' => "List of users",
+        'search' => "Search",
     ],
     'message' => [
 

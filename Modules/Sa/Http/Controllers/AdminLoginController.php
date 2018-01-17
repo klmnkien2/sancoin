@@ -50,7 +50,7 @@ class AdminLoginController extends Controller
                 'username' => $request->get('username'),
                 'password' => $request->get('password')
             ])) {
-                return redirect()->intended(route('admin.index'));
+                return redirect(route('admin.index'));
             }
         } while (false);
         //dd($error);
