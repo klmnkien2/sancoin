@@ -8,7 +8,7 @@ $pageParam = empty($condition) ? 'page=' : '&page=';
 <div class="text-right dataTables_paginate paging_simple_numbers">
     <ul class="pagination">
         <li class="paginate_button previous {{$page == 1 ? 'disabled' : ''}}">
-            <a href="{{$page == 1 ? 'javascript:void(0)' : $url . $pageParam . ($page - 1)}}">{{trans('labels_c.C_L024')}}</a>
+            <a href="{{$page == 1 ? 'javascript:void(0)' : $url . $pageParam . ($page - 1)}}">{{trans('admin.label.previous')}}</a>
         </li>
         @if ($totalPage < 9)
             @for($i = 1; $i <= $totalPage; $i++)
@@ -72,7 +72,7 @@ $pageParam = empty($condition) ? 'page=' : '&page=';
             </li>
         @endif
         <li class="paginate_button next {{$page == $totalPage ? 'disabled' : ''}}">
-            <a href="{{$page == $totalPage ? 'javascript:void(0)' : $url . $pageParam . ($page + 1)}}">{{trans('labels_c.C_L023')}}</a>
+            <a href="{{$page == $totalPage ? 'javascript:void(0)' : $url . $pageParam . ($page + 1)}}">{{trans('admin.label.next')}}</a>
         </li>
     </ul>
 </div>

@@ -67,7 +67,6 @@
 <!-- FastClick -->
 <script src="{{url('assets/sa/admin-lte2/bower_components/fastclick/lib/fastclick.js')}}"></script>
 <script src="{{url('assets/sa/admin-lte2/plugins/datapicker/js/bootstrap-datepicker.min.js')}}"></script>
-<script src="{{url('assets/sa/admin-lte2/plugins/datapicker/locales/bootstrap-datepicker.ja.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{url('assets/sa/admin-lte2/dist/js/adminlte.min.js')}}"></script>
 <script src="{{url('assets/sa/admin-lte2/plugins/jsRender/jsrender.min.js')}}"></script>
