@@ -19,6 +19,7 @@ class BtcWallet extends Model
         'id',
         'user_id',
         'address',
-        'private'
+        'private',
+        'balance'
     ];
 }

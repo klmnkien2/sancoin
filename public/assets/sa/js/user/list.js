@@ -26,6 +26,8 @@ $(document).ready(function () {
     }
     var callbackFail = function (response) {
       $('#pg-modal-error').modal('show');
+      $('#pg-modal-delete').modal('hide');
+      deleteBtn.ladda('stop');
     };
     callAjax($(this).data('url'), {id: listID, condition: window.location.search.substr(1)}, callbackSuccess, callbackFail);
   });

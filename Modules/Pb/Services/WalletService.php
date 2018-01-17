@@ -49,6 +49,15 @@ class WalletService
             $wallet = EthWallet::create($data);
         }
 
+        $balance = $this->etherscanService->getBalance($wallet->address);
+        if (!empty($balance['result'])) {
+            $balance = $balance['result'];
+        } else {
+            $balance = 0;
+        }
+        $wallet->balance = (string)$balance;
+        $wallet->save();
+
         return $wallet;
     }
 
@@ -77,6 +86,13 @@ class WalletService
 
             $wallet = BtcWallet::create($data);
         }
+
+        $balance = $this->bitcoinService->getBalance($wallet->address);
+        if (empty($balance)) {
+            $balance = 0;
+        }
+        $wallet->balance = (string)$balance;
+        $wallet->save();
 
         return $wallet;
     }

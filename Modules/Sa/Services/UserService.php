@@ -49,7 +49,7 @@ class UserService extends Service
         $response = ['status' => false, 'errorList' => []];
         if (!empty($request['id'])) {
             $listID = $request['id'];
-            $dataList = User::select('id', 'code', 'status')->whereIn('id', $listID)->get();
+            $dataList = User::select('id', 'status')->whereIn('id', $listID)->get();
             $checkInvalid = $this->checkDeleteInvalid($dataList);
 
             if (!empty($checkInvalid)) {

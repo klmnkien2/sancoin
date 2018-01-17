@@ -18,6 +18,7 @@ class CreateEthWalletsTable extends Migration
             $table->bigInteger('user_id')->unique();
             $table->string('address', 500)->nullable();
             $table->string('private_key', 500)->nullable();
+            $table->string('balance', 30)->default("0");
             $table->timestamps();
         });
     }

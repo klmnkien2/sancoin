@@ -31,10 +31,17 @@ return [
         'ok' => 'Ok',
         'cancel' => 'Cancel',
         'confirm' => 'Confirm',
+        'alert' => 'Alert',
+        'result' => 'Result',
+        'search_date' => 'Search in Date',
+        'fee_amount' => 'Amount of Fee in VND',
     ],
     'message' => [
         'pagination_summary' => "Total :total records. Showing from :from to :to.",
         'table_no_result' => "No results.",
         'confirm_delete' => "Do you really want to delete these items?",
+        'delete_fail' => "Could not delete selected items.",
+        'delete_success_result' => 'Deleted successfully :number records.',
+        'delete_fail_result' => 'Deleted fail :number records.',
     ],
 ];

@@ -10,7 +10,7 @@ if (check_domain(env('DOMAIN_SA'))) {
         Route::group(['middleware' => 'auth:admin'], function () {
             Route::get('/logout', 'HomeController@getLogout')->name('admin.logout');
             Route::get('/', 'HomeController@index')->name('admin.index');
-//            Route::get('/', 'HomeController@report')->name('admin.system_fee');
+            Route::get('/system/fee', 'HomeController@systemFee')->name('admin.system_fee');
 //            Route::get('/', 'HomeController@transList')->name('admin.user_trans');
             Route::match(array('GET','POST'), '/user/list', 'HomeController@userList')->name('admin.user_list');
 //            Route::post('/', 'HomeController@userVerify')->name('admin.user_verify');

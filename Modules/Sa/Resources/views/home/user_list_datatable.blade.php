@@ -32,7 +32,17 @@
                     <td >{{ $user['email'] }}</td>
                     <td >{{ $user['created_at'] }}</td>
                     <td >{{ $user['username'] }}</td>
-                    <td >{{ $user['status'] }}</td>
+                    <td >
+                        @if ($user['status'] == 0)
+                            <span class="label label-danger">Not activated</span>
+                        @endif
+                        @if ($user['status'] == 1)
+                                <span class="label label-warning">Not verified</span>
+                        @endif
+                        @if ($user['status'] == 2)
+                                <span class="label label-success">Verified</span>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         @else

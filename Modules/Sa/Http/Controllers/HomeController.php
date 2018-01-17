@@ -8,6 +8,11 @@ use Modules\Sa\Helper\Util;
 use Modules\Sa\Services\UserService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Auth;
+use App\User;
+use Models\Transaction;
+use Models\BtcWallet;
+use Models\EthWallet;
+use Models\VndWallet;
 
 class HomeController extends BaseController
 {
@@ -26,7 +31,20 @@ class HomeController extends BaseController
      */
     public function index()
     {
-        return view('sa::index');
+        $members = User::count();
+        $totalBtc = BtcWallet::sum('balance');
+        $totalEth = EthWallet::sum('balance');
+        $totalVnd = VndWallet::sum('amount');
+        return view('sa::index')->with(compact('members', 'totalBtc', 'totalEth', 'totalVnd'));
+    }
+
+    public  function systemFee(Request $request)
+    {
+        $searchDate =  $request->has('search_date') ? $request->get('search_date') : '';
+        $request->flash();
+        $fee_btc = 0;
+        $fee_eth = 0;
+        return view('sa::home.system_fee')->with(compact('fee_btc', 'fee_eth'));
     }
 
     public function userList(Request $request)
@@ -41,13 +59,15 @@ class HomeController extends BaseController
         list($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
         list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $request->all());
 
+        $request->flash();
         return view('sa::home.user_list')->with(compact('listUsers', 'paginationText', 'paginationHtml', 'condition', 'per', 'page', 'total'));
     }
 
     public function userDelete(Request $request)
     {
+        print_r($request);die;
         $response = $this->userService->deleteMulti($request->all());
-        if ($request->has('reload_list') && $response['status'] && $response['count'] > 0) {
+        if (!$request->has('update_only') && $response['status'] && $response['count'] > 0) {
             list ($listUsers, $total, $page, $per) = $this->userService->getUserList($request->all()['condition']);
             list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $request->all()['condition'], route('admin.user_list'));
 

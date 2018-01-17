@@ -1,6 +1,6 @@
 @extends('sa::layouts.main')
 @section('title')
-    {{trans('admin.label.dashboard')}}
+    {{trans('admin.label.user_list')}}
 @endsection
 @section('extend-css')
 @endsection
@@ -28,13 +28,13 @@
                                     {{trans('messages.label.username')}}
                                 </div>
                                 <div class="col-sm-3">
-                                    <input type="text" class="form-control input-sm" placeholder="" name="username">
+                                    <input type="text" class="form-control input-sm" value="{{ old('username') }}" name="username">
                                 </div>
                                 <div class="col-sm-3 form-label">
                                     {{trans('messages.label.email')}}
                                 </div>
                                 <div class="col-sm-3">
-                                    <input type="email" class="form-control input-sm" placeholder="" name="email">
+                                    <input type="text" class="form-control input-sm" value="{{ old('email') }}" name="email">
                                 </div>
                             </div>
                             <hr>
@@ -104,6 +104,7 @@
         </div>
         <!-- /.row -->
         @include('sa::home.user_list_modal')
+        @include('sa::common.error_popup', ['id' => 'pg-modal-error', 'message' => trans('admin.message.delete_fail')])
     </section>
 @endsection
 @section('extend-js')

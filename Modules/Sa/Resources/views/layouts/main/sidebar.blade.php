@@ -30,7 +30,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="#"><i class="fa fa-circle-o"></i> {{trans('admin.label.transaction_management')}}</a></li>
-                    <li><a href="#"><i class="fa fa-circle-o"></i> {{trans('admin.label.system_fee')}}</a></li>
+                    <li><a href="{{ route('admin.system_fee') }}"><i class="fa fa-circle-o"></i> {{trans('admin.label.system_fee')}}</a></li>
                 </ul>
             </li>
 

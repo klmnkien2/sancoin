@@ -19,6 +19,7 @@ class EthWallet extends Model
         'id',
         'user_id',
         'address',
-        'private_key'
+        'private_key',
+        'balance'
     ];
 }
