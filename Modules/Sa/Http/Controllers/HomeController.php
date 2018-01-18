@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Sa\Helper\Util;
 use Modules\Sa\Services\UserService;
+use Modules\Sa\Services\TransactionService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Auth;
 use App\User;
@@ -18,11 +19,13 @@ class HomeController extends BaseController
 {
     use AuthenticatesUsers;
     protected $userService;
+    protected $transService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, TransactionService $transService)
     {
         parent::__construct();
         $this->userService = $userService;
+        $this->transService = $transService;
     }
 
     /**
@@ -57,7 +60,23 @@ class HomeController extends BaseController
             'sort' => $request->has('sort') && is_numeric($request->get('sort')) ? $request->get('sort') : 1
         ];
         list($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
-        list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $request->all());
+        list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition);
+
+        $request->flash();
+        return view('sa::home.user_list')->with(compact('listUsers', 'paginationText', 'paginationHtml', 'condition', 'per', 'page', 'total'));
+    }
+
+    public function transList(Request $request)
+    {
+        $condition = [
+            'username' => $request->has('username') ? $request->get('username') : '',
+            'email' => $request->has('email') ? $request->get('email') : '',
+            'per' => $request->has('per') && is_numeric($request->get('per')) ? $request->get('per') : QUANTITY_PER_PAGE,
+            'page' => $request->has('page') && is_numeric($request->get('page')) ? $request->get('page') : 1,
+            'sort' => $request->has('sort') && is_numeric($request->get('sort')) ? $request->get('sort') : 1
+        ];
+        list($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
+        list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition);
 
         $request->flash();
         return view('sa::home.user_list')->with(compact('listUsers', 'paginationText', 'paginationHtml', 'condition', 'per', 'page', 'total'));
@@ -79,13 +98,73 @@ class HomeController extends BaseController
                     'sort' => !empty($condition['sort']) ? $condition['sort'] : 1,
                 ];
                 list ($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
-                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $request->get('condition', []), route('admin.user_list'));
+                //return response()->json($listUsers);
+                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition, route('admin.user_list'));
+                //return response()->json($listUsers);
                 $response['dataHtml'] = view('sa::home.user_list_datatable', compact('listUsers', 'page', 'per'))->render();
                 $response['paginationText'] = $paginationText;
                 $response['paginationHtml'] = $paginationHtml;
             }
         } catch (\Exception $ex) {
             //should Log
+        }
+
+        return response()->json($response);
+    }
+
+    public function userVerify(Request $request)
+    {
+        $response = $this->userService->verifyMulti($request->all());
+
+        try {
+            if ($response['status'] && $response['count'] > 0) {
+                $condition = $request->get('condition');
+                parse_str($condition, $condition);
+                $condition = [
+                    'username' => !empty($condition['username']) ? $condition['username'] : '',
+                    'email' => !empty($condition['email']) ? $condition['email'] : '',
+                    'per' => !empty($condition['per']) ? $condition['per'] : QUANTITY_PER_PAGE,
+                    'page' => !empty($condition['page']) ? $condition['page'] : 1,
+                    'sort' => !empty($condition['sort']) ? $condition['sort'] : 1,
+                ];
+                list ($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
+                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition, route('admin.user_list'));
+                $response['dataHtml'] = view('sa::home.user_list_datatable', compact('listUsers', 'page', 'per'))->render();
+                $response['paginationText'] = $paginationText;
+                $response['paginationHtml'] = $paginationHtml;
+            }
+        } catch (\Exception $ex) {
+            //should Log
+            return response()->json($ex);
+        }
+
+        return response()->json($response);
+    }
+
+    public function transApprove(Request $request)
+    {
+        $response = $this->userService->verifyMulti($request->all());
+
+        try {
+            if ($response['status'] && $response['count'] > 0) {
+                $condition = $request->get('condition');
+                parse_str($condition, $condition);
+                $condition = [
+                    'username' => !empty($condition['username']) ? $condition['username'] : '',
+                    'email' => !empty($condition['email']) ? $condition['email'] : '',
+                    'per' => !empty($condition['per']) ? $condition['per'] : QUANTITY_PER_PAGE,
+                    'page' => !empty($condition['page']) ? $condition['page'] : 1,
+                    'sort' => !empty($condition['sort']) ? $condition['sort'] : 1,
+                ];
+                list ($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
+                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition, route('admin.user_list'));
+                $response['dataHtml'] = view('sa::home.user_list_datatable', compact('listUsers', 'page', 'per'))->render();
+                $response['paginationText'] = $paginationText;
+                $response['paginationHtml'] = $paginationHtml;
+            }
+        } catch (\Exception $ex) {
+            //should Log
+            return response()->json($ex);
         }
 
         return response()->json($response);

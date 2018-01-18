@@ -43,5 +43,13 @@ return [
         'delete_fail' => "Could not delete selected items.",
         'delete_success_result' => 'Deleted successfully :number records.',
         'delete_fail_result' => 'Deleted fail :number records.',
+        'confirm_verify' => "Do you really want to verify these items?",
+        'verify_fail' => "Could not verify selected items.",
+        'verify_success_result' => 'Verified successfully :number records.',
+        'verify_fail_result' => 'Verified fail :number records.',
+        'confirm_approve' => "Do you really want to approve these items?",
+        'approve_fail' => "Could not approve selected items.",
+        'approve_success_result' => 'Approved successfully :number records.',
+        'approve_fail_result' => 'Approved fail :number records.',
     ],
 ];

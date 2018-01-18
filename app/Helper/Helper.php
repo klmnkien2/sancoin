@@ -107,7 +107,7 @@ if (!function_exists('render_pagination')) {
 }
 
 if (!function_exists('menu_active')) {
-    function menu_active($url, $type = 'pb')
+    function menu_active($url, $type = 'pb', $activeParent = null)
     {
         if ($type == 'pb') {
             $curUrl = Request::url();
@@ -118,37 +118,23 @@ if (!function_exists('menu_active')) {
             }
         }
 
-        $segments = explode('/', str_replace([url('/') . DIRECTORY_SEPARATOR], '', $url));
-        $curSegments = Request::segments();
-        $curUrl = Request::url();
-        $except = config('config.menu.' . $type);
-
-
-        if (strpos($curUrl, $url) !== false) {
-            $check = true;
-        } else {
-            $check = false;
-        }
-
-        if ($check) {
-            $class = 'class="active"';
-
-            if (isset($segments[0]) && array_key_exists($segments[0], $except)) {
-                if (isset($segments[1]) && in_array($segments[1], $except[$segments[0]])) {
-                    $class = 'class="active"';
-                } else {
-                    if (count($curSegments) == 1 || (isset($curSegments[1]) && !in_array($curSegments[1], $except[$segments[0]]))) {
-                        $class = 'class="active"';
-                    } else {
-                        $class = null;
+        if ($type == 'admin') {
+            $curUrl = Request::url();
+            if (!empty($activeParent)) {
+                foreach ($activeParent as $childMenu) {
+                    if (strpos($curUrl, $childMenu) !== false) {
+                        return 'active menu-open';
                     }
                 }
+                return '';
             }
-        } else {
-            $class = null;
-        }
 
-        return $class;
+            if (strpos($curUrl, $url) !== false) {
+                return 'active';
+            } else {
+                return '';
+            }
+        }
     }
 }
 

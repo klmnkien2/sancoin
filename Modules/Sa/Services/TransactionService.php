@@ -1,12 +1,12 @@
 <?php
 namespace Modules\Sa\Services;
 
-use App\Helper\Uploader;
+use Models\Transaction;
 use Auth;
 use DB;
 use App\User;
 
-class UserService extends Service
+class TransactionService extends Service
 {
 
     public function __construct()
@@ -14,7 +14,7 @@ class UserService extends Service
         parent::__construct();
     }
 
-    public function getUserList($condition)
+    public function getTransList($condition)
     {
         //dd($condition);
         $page = $condition['page'];
@@ -117,7 +117,7 @@ class UserService extends Service
                 $invalidData[$value->id] = $value->status;
             }
         }
-        return $invalidData;
+        return [];
     }
 
     public function requestPlaces($request)

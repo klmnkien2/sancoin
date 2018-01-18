@@ -49,28 +49,6 @@
                     <!-- /.box-header -->
                     <div class="box-body">
                         <div id="userList_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
-                            {{--<div class="row">--}}
-                                {{--<div class="col-sm-6">--}}
-                                    {{--<div class="dataTables_length" id="example1_length">--}}
-                                        {{--<label>Show--}}
-                                            {{--<select name="example1_length" aria-controls="example1"--}}
-                                                    {{--class="form-control input-sm">--}}
-                                                {{--<option value="10">10</option>--}}
-                                                {{--<option value="25">25</option>--}}
-                                                {{--<option value="50">50</option>--}}
-                                                {{--<option value="100">100</option>--}}
-                                            {{--</select> entries--}}
-                                        {{--</label>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                                {{--<div class="col-sm-6">--}}
-                                    {{--<div id="example1_filter" class="dataTables_sort">--}}
-                                        {{--<label>Search:<input--}}
-                                                    {{--type="search" class="form-control input-sm" placeholder=""--}}
-                                                    {{--aria-controls="example1"></label>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
                             <div class="row">
                                 <div class="col-sm-12 pull-right">
                                     <button type="button" data-toggle="modal" data-target="#pg-modal-delete" class="btn btn-sm btn-flat btn-danger pull-right pg-btn-action" disabled id="pg-btn-delete">{{trans('admin.label.buttonDelete')}}</button>
@@ -80,7 +58,7 @@
                             <br>
                             <div class="row">
                                 <div class="col-sm-12" id="pg-table-area">
-                                    @include('sa::home.user_list_datatable')
+                                    @include('sa::home.trans_list_datatable')
                                 </div>
                             </div>
                             <div class="row">
@@ -102,9 +80,8 @@
             <!-- /.col -->
         </div>
         <!-- /.row -->
-        @include('sa::home.user_list_modal')
+        @include('sa::home.trans_list_modal')
         @include('sa::common.error_popup', ['id' => 'pg-modal-error', 'message' => trans('admin.message.delete_fail')])
-        @include('sa::common.error_popup', ['id' => 'pg-modal-verify-error', 'message' => trans('admin.message.verify_fail')])
     </section>
 @endsection
 @section('extend-js')
