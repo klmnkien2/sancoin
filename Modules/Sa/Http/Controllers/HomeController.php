@@ -65,16 +65,29 @@ class HomeController extends BaseController
 
     public function userDelete(Request $request)
     {
-        print_r($request);die;
         $response = $this->userService->deleteMulti($request->all());
-        if (!$request->has('update_only') && $response['status'] && $response['count'] > 0) {
-            list ($listUsers, $total, $page, $per) = $this->userService->getUserList($request->all()['condition']);
-            list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $request->all()['condition'], route('admin.user_list'));
 
-            $response['dataHtml'] = view('sa::home.user_list_datatable', compact('listUsers', 'page', 'per'))->render();
-            $response['paginationText'] = $paginationText;
-            $response['paginationHtml'] = $paginationHtml;
+        try {
+            if ($response['status'] && $response['count'] > 0) {
+                $condition = $request->get('condition');
+                parse_str($condition, $condition);
+                $condition = [
+                    'username' => !empty($condition['username']) ? $condition['username'] : '',
+                    'email' => !empty($condition['email']) ? $condition['email'] : '',
+                    'per' => !empty($condition['per']) ? $condition['per'] : QUANTITY_PER_PAGE,
+                    'page' => !empty($condition['page']) ? $condition['page'] : 1,
+                    'sort' => !empty($condition['sort']) ? $condition['sort'] : 1,
+                ];
+                list ($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
+                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $request->get('condition', []), route('admin.user_list'));
+                $response['dataHtml'] = view('sa::home.user_list_datatable', compact('listUsers', 'page', 'per'))->render();
+                $response['paginationText'] = $paginationText;
+                $response['paginationHtml'] = $paginationHtml;
+            }
+        } catch (\Exception $ex) {
+            //should Log
         }
+
         return response()->json($response);
     }
 

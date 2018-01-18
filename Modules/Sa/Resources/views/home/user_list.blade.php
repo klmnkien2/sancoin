@@ -22,7 +22,7 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">
-                        <form id="pg-search-form" method="post" action="">
+                        <form id="pg-search-form" method="get" action="">
                             <div class="row">
                                 <div class="col-sm-3 form-label">
                                     {{trans('messages.label.username')}}
@@ -39,7 +39,6 @@
                             </div>
                             <hr>
                             <div class="row" style="text-align: center; margin-top: 20px;">
-                                {{csrf_field()}}
                                 <input id="pg-input-page" type="hidden" name="page">
                                 <button type="submit" class="btn btn-success">
                                     {{trans('admin.label.search')}}
@@ -80,7 +79,7 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col-sm-12" id="pg-data-table">
+                                <div class="col-sm-12" id="pg-table-area">
                                     @include('sa::home.user_list_datatable')
                                 </div>
                             </div>

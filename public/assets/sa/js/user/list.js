@@ -2,15 +2,6 @@ var deleteBtn = $('#pg-confirm-delete').ladda();
 var verifyBtn = $('#pg-confirm-verify').ladda();
 
 $(document).ready(function () {
-  $('.datepicker').datepicker({
-    keyboardNavigation: false,
-    forceParse: false,
-    autoclose: true,
-    todayHighlight: true,
-    enableOnReadonly: false,
-    language: "ja"
-  });
-
   $('#pg-confirm-delete').on('click', function () {
     deleteBtn.ladda('start');
     var listID = getCheckedID();
