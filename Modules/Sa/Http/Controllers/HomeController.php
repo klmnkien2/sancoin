@@ -44,9 +44,11 @@ class HomeController extends BaseController
     public  function systemFee(Request $request)
     {
         $searchDate =  $request->has('search_date') ? $request->get('search_date') : '';
+        $dayAfter = (new \DateTime($searchDate))->modify('+1 day')->format('Y-m-d');
+        list($fee_eth, $fee_btc) = $this->transService->getReport($searchDate, $dayAfter);
         $request->flash();
-        $fee_btc = 0;
-        $fee_eth = 0;
+//        $fee_btc = 0;
+//        $fee_eth = 0;
         return view('sa::home.system_fee')->with(compact('fee_btc', 'fee_eth'));
     }
 

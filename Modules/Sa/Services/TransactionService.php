@@ -97,4 +97,25 @@ class TransactionService extends Service
         }
         return [];
     }
+
+    public function getReport($fromDate, $toDate)
+    {
+        $whereArray = [];
+        if (!empty($fromDate)) {
+            $whereArray[] = ['key' => 'transactions.created_at', 'operator' => '>=', 'value' => strtotime($fromDate)];
+        }
+        if (!empty($toDate)) {
+            $whereArray[] = ['key' => 'transactions.created_at', 'operator' => '<', 'value' => $toDate];
+        }
+
+        $primaryQuery = DB::table('transactions')->leftJoin('orders', 'transactions.order_id', '=', 'orders.id');
+        foreach ($whereArray as $where) {
+            $primaryQuery->where($where['key'], $where['operator'], $where['value']);
+        }
+        //dd($primaryQuery);
+        $totalETH = $primaryQuery->where('orders.coin_type', '=', 'eth')->sum(DB::raw('from_amount - to_amount'));
+        $totalBTC = $primaryQuery->where('orders.coin_type', '=', 'btc')->sum(DB::raw('from_amount - to_amount'));
+
+        return [$totalETH, $totalBTC];
+    }
 }

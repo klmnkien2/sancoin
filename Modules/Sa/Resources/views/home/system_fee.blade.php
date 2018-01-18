@@ -22,23 +22,22 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header with-border">
-                        <form id="pg-search-form" method="post" action="">
+                        <form id="pg-search-form" method="get" action="">
                             <div class="row">
                                 <div class="col-sm-6 form-label">
                                     {{trans('admin.label.search_date')}}
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="input-group date">
+                                <div class="col-sm-3">
+                                    <div class="input-group input-group-sm date">
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
-                                        <input type="text" class="form-control pull-right" id="datepicker" value="{{ old('search_date') }}" name="search_date" >
+                                        <input type="text" class="form-control pull-right input-sm" id="datepicker" value="{{ old('search_date') }}" name="search_date" >
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row" style="text-align: center; margin-top: 20px;">
-                                {{ csrf_field() }}
                                 <button type="submit" class="btn btn-success">
                                     {{trans('admin.label.search')}}
                                 </button>
@@ -89,7 +88,8 @@
       $(function () {
         //Date picker
         $('#datepicker').datepicker({
-          autoclose: true
+          autoclose: true,
+          format: 'yyyy-mm-dd'
         })
       })
     </script>
