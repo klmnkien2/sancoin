@@ -30,4 +30,19 @@ class Transaction extends Model
         'from_amount',
         'status'
     ];
+
+    public function from_user()
+    {
+        return $this->belongsTo('App\User', 'from_id')->select(array('id', 'username', 'status'));
+    }
+
+    public function to_user()
+    {
+        return $this->belongsTo('App\User', 'to_id')->select(array('id', 'username', 'status'));
+    }
+
+    public function order()
+    {
+        return $this->belongsTo('Models\Order', 'order_id')->select(array('id', 'coin_type', 'order_type'));
+    }
 }

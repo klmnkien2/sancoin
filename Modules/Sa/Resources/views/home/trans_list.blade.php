@@ -1,13 +1,13 @@
 @extends('sa::layouts.main')
 @section('title')
-    {{trans('admin.label.user_list')}}
+    {{trans('admin.label.transaction_management')}}
 @endsection
 @section('extend-css')
 @endsection
 @section('breadcrumb')
     <section class="content-header">
         <h1>
-            {{trans('admin.label.user_list')}}
+            {{trans('admin.label.transaction_management')}}
         </h1>
         {{--<ol class="breadcrumb">--}}
             {{--<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>--}}
@@ -31,10 +31,29 @@
                                     <input type="text" class="form-control input-sm" value="{{ old('username') }}" name="username">
                                 </div>
                                 <div class="col-sm-3 form-label">
-                                    {{trans('messages.label.email')}}
+                                    {{trans('admin.label.status')}}
                                 </div>
                                 <div class="col-sm-3">
-                                    <input type="text" class="form-control input-sm" value="{{ old('email') }}" name="email">
+                                    <select class="form-control input-sm" name="status">
+                                        <option value="">All</option>
+                                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="done" {{ old('status') == 'done' ? 'selected' : '' }}>Done</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-3 form-label">
+                                    {{trans('admin.label.from_date')}}
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm datepicker" value="{{ old('from_date') }}" name="from_date">
+                                </div>
+                                <div class="col-sm-3 form-label">
+                                    {{trans('admin.label.to_date')}}
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm datepicker" value="{{ old('to_date') }}" name="to_date">
                                 </div>
                             </div>
                             <hr>
@@ -51,8 +70,8 @@
                         <div id="userList_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
                             <div class="row">
                                 <div class="col-sm-12 pull-right">
-                                    <button type="button" data-toggle="modal" data-target="#pg-modal-delete" class="btn btn-sm btn-flat btn-danger pull-right pg-btn-action" disabled id="pg-btn-delete">{{trans('admin.label.buttonDelete')}}</button>
-                                    <button type="button" data-toggle="modal" data-target="#pg-modal-verify" class="btn btn-sm btn-flat btn-primary pull-right pg-btn-action" disabled id="pg-btn-verify">{{trans('admin.label.buttonVerify')}}</button>
+                                    <button type="button" data-toggle="modal" data-target="#pg-modal-approve" class="btn btn-sm btn-flat btn-primary pull-right pg-btn-action" disabled id="pg-btn-delete">{{trans('admin.label.buttonApprove')}}</button>
+                                    {{--<button type="button" data-toggle="modal" data-target="#pg-modal-disapprove" class="btn btn-sm btn-flat btn-danger pull-right pg-btn-action" disabled id="pg-btn-verify">{{trans('admin.label.buttonDisapprove')}}</button>--}}
                                 </div>
                             </div>
                             <br>
@@ -85,6 +104,15 @@
     </section>
 @endsection
 @section('extend-js')
+    <script>
+      $(function () {
+        //Date picker
+        $('.datepicker').datepicker({
+          autoclose: true,
+          format: 'yyyy-mm-dd'
+        })
+      })
+    </script>
     <script src="{{url_sync('assets/sa/js/list_common.js')}}"></script>
-    <script src="{{url_sync('assets/sa/js/user/list.js')}}"></script>
+    <script src="{{url_sync('assets/sa/js/transaction/list.js')}}"></script>
 @endsection

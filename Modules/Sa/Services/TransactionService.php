@@ -14,7 +14,7 @@ class TransactionService extends Service
         parent::__construct();
     }
 
-    public function getTransList($condition)
+    public function getList($condition)
     {
         //dd($condition);
         $page = $condition['page'];
@@ -26,13 +26,21 @@ class TransactionService extends Service
                 if ($keyCondition == 'username') {
                     $whereArray[] = ['key' => $keyCondition, 'operator' => 'like', 'value' => "%" . $valueCondition . "%"];
                 }
-                if ($keyCondition == 'email') {
-                    $whereArray[] = ['key' => $keyCondition, 'operator' => 'like', 'value' => "%" . $valueCondition . "%"];
+                if ($keyCondition == 'status') {
+                    $whereArray[] = ['key' => $keyCondition, 'operator' => '=', 'value' => $valueCondition];
+                }
+                if ($keyCondition == 'from_date') {
+                    $whereArray[] = ['key' => 'created_at', 'operator' => '>=', 'value' => strtotime($valueCondition)];
+                }
+                if ($keyCondition == 'to_date') {
+//                    dd(strtotime("$valueCondition"), strtotime("$valueCondition +1 day"));
+                    $dayAfter = (new \DateTime($valueCondition))->modify('+1 day')->format('Y-m-d');
+                    $whereArray[] = ['key' => 'created_at', 'operator' => '<', 'value' => $dayAfter];
                 }
             }
         }
-
-        $primaryQuery = User::query();
+//dd($whereArray);
+        $primaryQuery = Transaction::query();
         foreach ($whereArray as $where) {
             $primaryQuery->where($where['key'], $where['operator'], $where['value']);
         }
@@ -44,13 +52,13 @@ class TransactionService extends Service
         return [$listUsers, $total, $page, $per];
     }
 
-    public function deleteMulti($request)
+    public function approve($request)
     {
         $response = ['status' => false, 'errorList' => []];
         if (!empty($request['id'])) {
             $listID = $request['id'];
-            $dataList = User::select('id', 'status')->whereIn('id', $listID)->get();
-            $checkInvalid = $this->checkDeleteInvalid($dataList);
+            $dataList = Transaction::select('id', 'status', 'type')->whereIn('id', $listID)->get();
+            $checkInvalid = $this->checkApproveInvalid($dataList);
 
             if (!empty($checkInvalid)) {
                 $response['errorList'] = $checkInvalid;
@@ -60,7 +68,12 @@ class TransactionService extends Service
             if (!empty($listID)) {
                 DB::beginTransaction();
                 try {
-                    User::whereIn('id', $listID)->delete();
+                    foreach ($dataList as $transaction) {
+                        if ($transaction->type == 'order') {
+                            continue;
+                        }
+                        $transaction->update(['status' => 'done']);
+                    }
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollback();
@@ -74,127 +87,14 @@ class TransactionService extends Service
         return $response;
     }
 
-    public function verifyMulti($request)
-    {
-        $response = ['status' => false, 'errorList' => []];
-        if (!empty($request['id'])) {
-            $listID = $request['id'];
-            $dataList = User::select('id', 'status')->whereIn('id', $listID)->get();
-            $checkInvalid = $this->checkVerifyInvalid($dataList);
-
-            if (!empty($checkInvalid)) {
-                $response['errorList'] = $checkInvalid;
-                $listID = array_diff($listID, array_keys($checkInvalid));
-            }
-
-            if (!empty($listID)) {
-                DB::beginTransaction();
-                try {
-                    User::whereIn('id', $listID)->update(['status' => 2]);
-                    DB::commit();
-                } catch (\Exception $e) {
-                    DB::rollback();
-                    $response['status'] = false;
-                    return $response;
-                }
-            }
-            $response['count'] = count($listID);
-            $response['status'] = true;
-        }
-        return $response;
-    }
-
-    public function checkDeleteInvalid($dataList)
-    {
-        return [];
-    }
-
-    public function checkVerifyInvalid($dataList)
+    public function checkApproveInvalid($dataList)
     {
         $invalidData = [];
         foreach ($dataList as $value) {
-            if ($value->status == 2) {//already verified
+            if ($value->type == 'order') {
                 $invalidData[$value->id] = $value->status;
             }
         }
         return [];
-    }
-
-    public function requestPlaces($request)
-    {
-        $response = [$this->textStatus => false, $this->textErrorList => []];
-        if (!empty($request['type']) && !empty($request['id'])) {
-            $listID = $request['id'];
-            $dataList = Place::select('id', 'code', $this->textStatus)->whereIn('id', $listID)->get();
-            list ($checkInvalid, $response['errorMessage']) = $this->checkDataInvalid($request['type'], $dataList);
-
-            if (!empty($checkInvalid)) {
-                $response[$this->textErrorList] = $checkInvalid;
-                $listID = array_diff($listID, array_keys($checkInvalid));
-            }
-            if (!empty($listID)) {
-                DB::beginTransaction();
-                try {
-                    $this->performRequest($request['type'], $listID);
-                    DB::commit();
-                } catch (\Exception $e) {
-                    DB::rollback();
-                    $response[$this->textStatus] = false;
-                    return $response;
-                }
-            }
-            $response['count'] = count($listID);
-            $response[$this->textStatus] = true;
-        }
-        return $response;
-    }
-
-    private function performRequest($type, $listID)
-    {
-        if (in_array($type, [self::REQUEST_PUBLISH, self::REQUEST_STOP_PUBLISHING])) {
-            switch ($type) {
-                case self::REQUEST_PUBLISH:
-                    $status = config('config.place.status.published');
-                    break;
-                case self::REQUEST_STOP_PUBLISHING:
-                    $status = config('config.place.status.not_published');
-                    break;
-                default:
-                    $status = config('config.place.status.not_published');
-                    break;
-            }
-            Place::whereIn('id', $listID)->update([$this->textStatus => $status]);
-        }
-    }
-
-    private function checkDataInvalid($type, $dataList)
-    {
-        $validStatus = [];
-        switch ($type) {
-            case REQUEST_DELETE:
-                $validStatus = config('config.place.status.not_published');
-                break;
-            case self::REQUEST_PUBLISH:
-                $validStatus = config('config.place.status.not_published');
-                break;
-            case self::REQUEST_STOP_PUBLISHING:
-                $validStatus = config('config.place.status.published');
-                break;
-            default:
-                break;
-        }
-        $invalidData = [];
-        $errorMessage = null;
-        foreach ($dataList as $value) {
-            if ($value->status != $validStatus) {
-                $invalidData[$value->id] = $value->code;
-            }
-        }
-
-        if (count($dataList) == 1 && $validStatus == config('config.place.status.not_published') && $type == REQUEST_DELETE) {
-            $errorMessage = trans('labels_sa.SA_CID0010_M003');
-        }
-
-        return [$invalidData, $errorMessage];
     }
 }

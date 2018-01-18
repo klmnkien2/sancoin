@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <p>{{trans('admin.message.confirm_approve')}}</p>
-                        <button data-style="zoom-out" type="button" class="ladda-button btn pull-right btn-danger make-space-left" id="pg-confirm-approve" data-url="{{route('admin.user_approve')}}">{{trans('admin.label.ok')}}</button>
+                        <button data-style="zoom-out" type="button" class="ladda-button btn pull-right btn-danger make-space-left" id="pg-confirm-approve" data-url="{{route('admin.trans_approve')}}">{{trans('admin.label.ok')}}</button>
                         <button type="button" class="btn pull-right btn-default make-space-left" data-dismiss="modal">{{trans('admin.label.cancel')}}</button>
                     </div>
                 </div>

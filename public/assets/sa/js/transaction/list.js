@@ -1,24 +1,24 @@
-var deleteBtn = $('#pg-confirm-delete').ladda();
+var approveBtn = $('#pg-confirm-approve').ladda();
 var verifyBtn = $('#pg-confirm-verify').ladda();
 
 $(document).ready(function () {
-  $('#pg-confirm-delete').on('click', function () {
-    deleteBtn.ladda('start');
+  $('#pg-confirm-approve').on('click', function () {
+    approveBtn.ladda('start');
     var listID = getCheckedID();
     var callbackSuccess = function (response) {
-      $('#pg-modal-delete').modal('hide');
-      deleteBtn.ladda('stop');
+      $('#pg-modal-approve').modal('hide');
+      approveBtn.ladda('stop');
       if (response.status == true) {
         reloadTableData(response);
-        showResultModal('pg-modal-delete-success', response);
+        showResultModal('pg-modal-approve-success', response);
       } else {
         callbackFail();
       }
     }
     var callbackFail = function (response) {
       $('#pg-modal-error').modal('show');
-      $('#pg-modal-delete').modal('hide');
-      deleteBtn.ladda('stop');
+      $('#pg-modal-approve').modal('hide');
+      approveBtn.ladda('stop');
     };
     callAjax($(this).data('url'), {id: listID, condition: window.location.search.substr(1)}, callbackSuccess, callbackFail);
   });

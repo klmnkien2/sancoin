@@ -70,16 +70,18 @@ class HomeController extends BaseController
     {
         $condition = [
             'username' => $request->has('username') ? $request->get('username') : '',
-            'email' => $request->has('email') ? $request->get('email') : '',
+            'status' => $request->has('status') ? $request->get('status') : '',
+            'from_date' => $request->has('from_date') ? $request->get('from_date') : '',
+            'to_date' => $request->has('to_date') ? $request->get('to_date') : '',
             'per' => $request->has('per') && is_numeric($request->get('per')) ? $request->get('per') : QUANTITY_PER_PAGE,
             'page' => $request->has('page') && is_numeric($request->get('page')) ? $request->get('page') : 1,
             'sort' => $request->has('sort') && is_numeric($request->get('sort')) ? $request->get('sort') : 1
         ];
-        list($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
+        list($listData, $total, $page, $per) = $this->transService->getList($condition);
         list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition);
 
         $request->flash();
-        return view('sa::home.user_list')->with(compact('listUsers', 'paginationText', 'paginationHtml', 'condition', 'per', 'page', 'total'));
+        return view('sa::home.trans_list')->with(compact('listData', 'paginationText', 'paginationHtml', 'condition', 'per', 'page', 'total'));
     }
 
     public function userDelete(Request $request)
@@ -143,24 +145,27 @@ class HomeController extends BaseController
 
     public function transApprove(Request $request)
     {
-        $response = $this->userService->verifyMulti($request->all());
-
+        $response = $this->transService->approve($request->all());
         try {
             if ($response['status'] && $response['count'] > 0) {
                 $condition = $request->get('condition');
                 parse_str($condition, $condition);
                 $condition = [
                     'username' => !empty($condition['username']) ? $condition['username'] : '',
-                    'email' => !empty($condition['email']) ? $condition['email'] : '',
+                    'status' => !empty($condition['status']) ? $condition['status'] : '',
+                    'from_date' => !empty($condition['from_date']) ? $condition['from_date'] : '',
+                    'to_date' => !empty($condition['to_date']) ? $condition['to_date'] : '',
                     'per' => !empty($condition['per']) ? $condition['per'] : QUANTITY_PER_PAGE,
                     'page' => !empty($condition['page']) ? $condition['page'] : 1,
                     'sort' => !empty($condition['sort']) ? $condition['sort'] : 1,
                 ];
-                list ($listUsers, $total, $page, $per) = $this->userService->getUserList($condition);
-                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition, route('admin.user_list'));
-                $response['dataHtml'] = view('sa::home.user_list_datatable', compact('listUsers', 'page', 'per'))->render();
+                list ($listData, $total, $page, $per) = $this->transService->getList($condition);
+                list($paginationText, $paginationHtml) = Util::render_pagination($total, $per, $page, $condition, route('admin.trans_list'));
+
+                $response['dataHtml'] = view('sa::home.trans_list_datatable', compact('listData', 'page', 'per'))->render();
                 $response['paginationText'] = $paginationText;
                 $response['paginationHtml'] = $paginationHtml;
+                //return response()->json($listData);
             }
         } catch (\Exception $ex) {
             //should Log
