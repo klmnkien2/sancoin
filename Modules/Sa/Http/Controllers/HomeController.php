@@ -179,8 +179,8 @@ class HomeController extends BaseController
 
     public function getLogout()
     {
-        Auth::guard('web_sa')->logout();
-        return redirect(route('sa.login'));
+        Auth::guard('admin')->logout();
+        return redirect(route('admin.login'));
     }
 
 
