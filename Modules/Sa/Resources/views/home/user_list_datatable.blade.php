@@ -31,7 +31,15 @@
                     <td >{{ $user['username'] }}</td>
                     <td >{{ $user['email'] }}</td>
                     <td >{{ $user['created_at'] }}</td>
-                    <td >{{ $user['username'] }}</td>
+                    <td >
+                        @if (empty($user['attachments']))
+                            N/A
+                        @else
+                            @foreach($user['attachments'] as $url)
+                                <a href="{{$url}}"><img src="{{$url}}" class="thumbnail" style="width:50px;display:inline;margin:5px;"></a>
+                            @endforeach
+                        @endif
+                    </td>
                     <td >
                         @if ($user['status'] == 0)
                             <span class="label label-danger">Not activated</span>

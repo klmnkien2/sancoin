@@ -1,10 +1,12 @@
 <?php
 namespace Modules\Sa\Services;
 
-use App\Helper\Uploader;
+use Models\Profile;
+use Models\Attachment;
 use Auth;
 use DB;
 use App\User;
+use Illuminate\Support\Facades\Storage;
 
 class UserService extends Service
 {
@@ -40,6 +42,17 @@ class UserService extends Service
         $total = $primaryQuery->count();
         //$primaryQuery->orderBy($sortConfig[$request['sort']][0], $sortConfig[$request['sort']][1]);
         $listUsers = $primaryQuery->skip(($page - 1) * $per)->take($per)->get();
+        foreach ($listUsers as $key => $user) {
+            $profile = Profile::where('user_id', $user->id)->first();
+            $attachmentUrls = [];
+            if (!empty($profile)) {
+                $attachments = Attachment::where(['ref_id' => $profile->id, 'type' => 'profiles'])->get();
+                foreach ($attachments as $attachment) {
+                    $attachmentUrls[] = Storage::url($attachment->url);
+                }
+            }
+            $listUsers[$key]['attachments'] = $attachmentUrls;
+        }
 
         return [$listUsers, $total, $page, $per];
     }

@@ -2,6 +2,7 @@
 
 namespace Modules\Pb\Services;
 
+use App\Helper\Cryptor;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Mockery\Exception;
@@ -46,10 +47,15 @@ class WalletService
             $data = json_decode($ethereum, true);
             $data['user_id'] = $userId;
 
+            $cryptor = new Cryptor(DB_ENCRYPTION_SECUKEY);
+            $data['private_key'] = $cryptor->encrypt($data['private_key']);
+            $data['address'] = $cryptor->encrypt($data['address']);
+
             $wallet = EthWallet::create($data);
         }
 
-        $balance = $this->etherscanService->getBalance($wallet->address);
+        $cryptor = new Cryptor(DB_ENCRYPTION_SECUKEY);
+        $balance = $this->etherscanService->getBalance($cryptor->decrypt($wallet->address));
         if (!empty($balance['result'])) {
             $balance = $balance['result'];
         } else {
@@ -57,6 +63,11 @@ class WalletService
         }
         $wallet->balance = (string)$balance;
         $wallet->save();
+
+        $wallet->address = $cryptor->decrypt($wallet->address);
+        $wallet['address'] = $wallet->address;
+        $wallet->private_key = $cryptor->decrypt($wallet->private_key);
+        $wallet['private_key'] = $wallet->private_key;
 
         return $wallet;
     }
@@ -84,15 +95,25 @@ class WalletService
             $data = $bitcoin;
             $data['user_id'] = $userId;
 
+            $cryptor = new Cryptor(DB_ENCRYPTION_SECUKEY);
+            $data['private'] = $cryptor->encrypt($data['private']);
+            $data['address'] = $cryptor->encrypt($data['address']);
+
             $wallet = BtcWallet::create($data);
         }
 
-        $balance = $this->bitcoinService->getBalance($wallet->address);
+        $cryptor = new Cryptor(DB_ENCRYPTION_SECUKEY);
+        $balance = $this->bitcoinService->getBalance($cryptor->decrypt($wallet->address));
         if (empty($balance)) {
             $balance = 0;
         }
         $wallet->balance = (string)$balance;
         $wallet->save();
+
+        $wallet->address = $cryptor->decrypt($wallet->address);
+        $wallet['address'] = $wallet->address;
+        $wallet->private = $cryptor->decrypt($wallet->private);
+        $wallet['private'] = $wallet->private;
 
         return $wallet;
     }
