@@ -27,3 +27,5 @@ if (!defined('LOG_TYPE_ERROR')) define('LOG_TYPE_ERROR', 400);
 if (!defined('LOG_TYPE_CRITICAL')) define('LOG_TYPE_CRITICAL', 500);
 if (!defined('LOG_TYPE_ALERT')) define('LOG_TYPE_ALERT', 550);
 if (!defined('LOG_TYPE_EMERGENCY')) define('LOG_TYPE_EMERGENCY', 600);
+
+if (!defined('DB_ENCRYPTION_SECUKEY')) define('DB_ENCRYPTION_SECUKEY', 'SAN1@COIN2!');

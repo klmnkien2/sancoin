@@ -53,11 +53,11 @@ class Handler extends ExceptionHandler
             if ($exception instanceof AuthenticationException) {
                 return parent::render($request, $exception);
             }
-//            if ($request->expectsJson()) {
-//                return response()->json($exception);
-//            } else {
-//                dd($exception);
-//            }
+            if ($request->expectsJson()) {
+                return response()->json($exception);
+            } else {
+                dd($exception);
+            }
             if ($exception instanceof \ErrorException) {
                 return response()->view('pb::errors.500', [], 500);
             }
