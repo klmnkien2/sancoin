@@ -7,6 +7,7 @@ use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Rest\ApiContext;
 use BlockCypher\Validation\TokenValidator;
 use App\Services\LogService;
+use GuzzleHttp\Client;
 
 class BitcoinService
 {
@@ -45,6 +46,21 @@ class BitcoinService
         } catch (\Exception $ex) {
             LogService::write(null, $ex);
             return 0;
+        }
+    }
+
+    public function getFeeAmount()
+    {
+        try {
+            $client = new Client();
+            $response = $client->get("https://bitcoinfees.earn.com/api/v1/fees/recommended");
+            $json = $response->getBody();
+
+            $aResult = json_decode($json, TRUE);
+            return $aResult['fastestFee'];
+        } catch (\Exception $ex) {
+            LogService::write(null, $ex);
+            return null;
         }
     }
 

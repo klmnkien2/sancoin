@@ -136,8 +136,17 @@ class WalletService
         return $inOrderAsBuyer + $inOrderAsSeller;
     }
 
+    /*
+     * $amount in Ether
+     */
     public function sendETH($userId, $toAddress, $amount)
     {
+        $gasPrice = $this->etherscanService->getGasPrice();
+        if (empty($gasPrice)) {
+            return null;
+        }
+        $amount = floatval($amount) - floatval($gasPrice) * 21000 / 1000000000000000000;
+        //dd($amount);
         $wallet = $this->getEthWallet($userId);
         if (empty($wallet)) {
             return null;
@@ -172,6 +181,12 @@ class WalletService
         if (empty($wallet)) {
             return null;
         }
+        $feeAmount = $this->bitcoinService->getFeeAmount();
+        if (empty($feeAmount)) {
+            return null;
+        }
+        $amount = floatval($amount) - floatval($feeAmount) * 300 / 100000000; // 300 is calculated bytes used to send  with 1 input and 1 output
+        //dd($amount);
         $fromAddress = $wallet->address;
         $privateKey = $wallet['private'];
 		//dd($privateKey);

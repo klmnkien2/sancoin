@@ -65,6 +65,24 @@ class EtherscanService
         return $this->request($params);
     }
 
+    public function getGasPrice()
+    {
+        $params = [
+            'module' => 'proxy',
+            'action' => 'eth_gasPrice',
+            'apikey' => 'noneedtouse'
+        ];
+
+        $response = $this->request($params, false);
+        if (!empty($response['result'])) {
+            $gasPrice = $response['result'];
+            $gasPrice = hexdec($gasPrice);
+            //dd($response['result'], $gasPrice);
+            return $gasPrice;
+        }
+        return null;
+    }
+
     public function getTransactions($addr, $page, $offset = 15)
     {
         $params = [
