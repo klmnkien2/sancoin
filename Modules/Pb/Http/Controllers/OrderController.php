@@ -378,7 +378,7 @@ class OrderController extends BaseController
         } catch (\Exception $e) {
             LogService::write($request, $e);
             DB::rollback();
-            dd($e);
+            //dd($e);
             $error = [
                 'common' => [trans('messages.message.order_fail')]
             ];
